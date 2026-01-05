@@ -1,0 +1,14 @@
+{
+  "name": "figma-text-extractor",
+  "version": "1.0.0",
+  "description": "A Figma plugin to extract text from selected layers",
+  "scripts": {
+    "build": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es6",
+    "watch": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es6 --watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.106.0",
+    "esbuild": "^0.27.2",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Text Extractor AI",
+  "id": "text-extractor-ai",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "src/ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": ["figma", "figjam"]
+}
+
