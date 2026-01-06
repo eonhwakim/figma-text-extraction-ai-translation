@@ -205,9 +205,6 @@ figma.ui.onmessage = (msg) => {
   }
 };
 
-figma.on("selectionchange", handleSelection);
-handleSelection();
-
 // --- Highlight Helpers ---
 function highlightNode(node: SceneNode) {
   // 이미 하이라이트가 있으면 건너뛰기
@@ -298,41 +295,6 @@ function clearHighlights(targetIds?: string[]) {
   
   // 매핑도 초기화
   highlightMap.clear();
-}
-
-function handleSelection() {
-  const selection = figma.currentPage.selection;
-
-  if (selection.length === 0) {
-    return;
-  }
-
-  const textNodesMap = new Map<string, TextNode>();
-  selection.forEach(node => {
-    if (node.type === "TEXT") textNodesMap.set(node.id, node as TextNode);
-  });
-
-  if (textNodesMap.size === 0) return;
-
-  const allTextNodes = Array.from(textNodesMap.values());
-  // 정렬
-  allTextNodes.sort((a, b) => {
-    if (!a.absoluteBoundingBox || !b.absoluteBoundingBox) return 0;
-    if (Math.abs(a.absoluteBoundingBox.y - b.absoluteBoundingBox.y) > 2) {
-      return a.absoluteBoundingBox.y - b.absoluteBoundingBox.y;
-    }
-    return a.absoluteBoundingBox.x - b.absoluteBoundingBox.x;
-  });
-
-  const data = allTextNodes.map(node => ({
-    ids: [node.id], // ID를 배열로 관리 (나중에 합쳐질 수 있으므로)
-    text: node.characters
-  }));
-
-  // 평평하게 펼쳐서 ID 저장
-  currentTextIds = new Set(allTextNodes.map(n => n.id));
-  
-  figma.ui.postMessage({ type: 'selection-update', data });
 }
 
 // Helper to strip tags and variables from resource strings for comparison

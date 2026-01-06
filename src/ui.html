@@ -137,9 +137,6 @@
             <button id="btnAdd" title="현재 선택된 텍스트 추가 (Cmd+Enter)" style="padding: 2px 6px; width:auto; background:none; border:1px solid #ddd; color:#0077C8; font-weight:bold;">+</button>
           </div>
           <div style="display:flex; align-items:center; gap:6px;">
-            <label style="font-size:11px; display:flex; align-items:center; gap:2px; color:#666; cursor:pointer;" title="선택 시 자동으로 목록 갱신">
-              <input type="checkbox" id="chkAuto"> Auto
-            </label>
             <button id="btnSettings" title="설정 (API Key)" style="padding: 2px 6px; width:auto; background:none; border:1px solid #ddd; color:#666;">⚙️</button>
             <button id="btnClear" title="목록 초기화" style="padding: 2px 6px; width:auto; background:none; border:1px solid #ddd; color:#666;">🗑️</button>
           </div>
@@ -260,25 +257,8 @@
       const msg = event.data.pluginMessage;
       
       if (msg.type === 'selection-update') {
-        // Check Auto-Sync
-        const isAuto = document.getElementById('chkAuto').checked;
-        if (!isAuto) return; // Ignore updates if Auto is off
-
-        const newData = msg.data;
-        // Update list to reflect current selection (Replace)
-        
-        const existingMap = new Map(currentData.map(d => [d.ids.join(','), d]));
-        currentData = newData.map(d => {
-             const key = d.ids.join(',');
-             if (existingMap.has(key)) {
-               const existing = existingMap.get(key);
-               return { ...d, checked: existing.checked, mergeSelected: existing.mergeSelected, originalItems: existing.originalItems };
-             }
-             return { ...d, checked: true, mergeSelected: false, originalItems: null };
-        });
-
-        render();
-        saveState();
+        // Auto feature removed. Ignoring selection updates.
+        return;
       }
 
       if (msg.type === 'add-items') {
