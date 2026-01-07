@@ -510,7 +510,7 @@
       <!-- Single Detail View -->
       <div id="detailContent" style="display:none;">
         <div class="detail-header">
-          <h3>번역 및 리소스 확인</h3>
+          <h3>기존 리소스 확인</h3>
         </div>
         
         <div class="source-text" id="detailSourceText"></div>
@@ -519,23 +519,6 @@
           <div class="section-title">기존 리소스 검색 결과</div>
           <div id="resourceMatches">
             <div class="loading">검색 중...</div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">Context (선택 사항)</div>
-          <textarea id="contextInput" placeholder="번역 시 참고할 문맥을 입력하세요 (예: 로그인 화면 에러 메시지)"></textarea>
-        </div>
-
-        <div class="section">
-          <div class="section-title">
-            AI 번역 제안
-            <button id="btnSetKey" class="btn-text">API Key 설정</button>
-          </div>
-          
-          <div id="translationResult"></div>
-          <div style="margin-top: 12px;">
-            <button id="btnTranslate" class="translate-btn">번역 실행</button>
           </div>
         </div>
       </div>
@@ -811,7 +794,7 @@
       
       document.getElementById('detailSourceText').innerText = item.text;
       document.getElementById('resourceMatches').innerHTML = '<div class="loading">검색 중...</div>';
-      document.getElementById('translationResult').innerHTML = '';
+      // document.getElementById('translationResult').innerHTML = '';
       
       parent.postMessage({ pluginMessage: { type: 'check-translation', text: item.text } }, '*');
     }
@@ -1036,83 +1019,87 @@
       alert('API Key가 저장되었습니다.');
     };
 
-    document.getElementById('btnTranslate').onclick = async () => {
-      if (!apiKey) {
-        openSettingsModal();
-        return;
-      }
-
-      const btn = document.getElementById('btnTranslate');
-      const resultArea = document.getElementById('translationResult');
-      
-      btn.disabled = true;
-      btn.innerText = '번역 중...';
-      resultArea.innerHTML = '';
-
-      try {
-        const text = currentDetailItem.text;
-        const context = document.getElementById('contextInput').value.trim();
-        
-        let referenceText = "";
-        if (currentDetailMatches && currentDetailMatches.length > 0) {
-           referenceText = "\nExisting Resources (Reference):\n" + currentDetailMatches.map(m => {
-             const parts = [`Key: ${m.key}`, `EN: "${m.value}"`];
-             if (m.deValue) parts.push(`DE: "${m.deValue}"`);
-             if (m.frValue) parts.push(`FR: "${m.frValue}"`);
-             return "- " + parts.join(", ");
-           }).join("\n");
+    const btnTranslate = document.getElementById('btnTranslate');
+    if (btnTranslate) {
+      btnTranslate.onclick = async () => {
+        if (!apiKey) {
+          openSettingsModal();
+          return;
         }
-
-        const prompt = `
-          Translate the following text into French (fr) and German (de).
-          Context: Mobile app/webtoon platform (Tappytoon).
-          ${context ? `User Context: ${context}` : ''}
-          ${referenceText}
+  
+        const btn = document.getElementById('btnTranslate');
+        const resultArea = document.getElementById('translationResult');
+        
+        btn.disabled = true;
+        btn.innerText = '번역 중...';
+        resultArea.innerHTML = '';
+  
+        try {
+          const text = currentDetailItem.text;
+          const contextInput = document.getElementById('contextInput');
+          const context = contextInput ? contextInput.value.trim() : '';
           
-          Source Text: "${text}"
-          
-          Requirements:
-          1. Provide 3 options for each language.
-          2. Explain the nuance for each option briefly in Korean.
-          3. Recommend the best option in Korean.
-          
-          Output JSON format:
-          {
-            "fr": [ { "text": "...", "nuance": "..." }, ... ],
-            "de": [ { "text": "...", "nuance": "..." }, ... ],
-            "recommendation": "Explain which option is best and why."
+          let referenceText = "";
+          if (currentDetailMatches && currentDetailMatches.length > 0) {
+             referenceText = "\nExisting Resources (Reference):\n" + currentDetailMatches.map(m => {
+               const parts = [`Key: ${m.key}`, `EN: "${m.value}"`];
+               if (m.deValue) parts.push(`DE: "${m.deValue}"`);
+               if (m.frValue) parts.push(`FR: "${m.frValue}"`);
+               return "- " + parts.join(", ");
+             }).join("\n");
           }
-        `;
-
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: prompt }],
-            response_format: { type: "json_object" }
-          })
-        });
-
-        const data = await response.json();
-        
-        if (data.error) {
-          throw new Error(data.error.message);
+  
+          const prompt = `
+            Translate the following text into French (fr) and German (de).
+            Context: Mobile app/webtoon platform (Tappytoon).
+            ${context ? `User Context: ${context}` : ''}
+            ${referenceText}
+            
+            Source Text: "${text}"
+            
+            Requirements:
+            1. Provide 3 options for each language.
+            2. Explain the nuance for each option briefly in Korean.
+            3. Recommend the best option in Korean.
+            
+            Output JSON format:
+            {
+              "fr": [ { "text": "...", "nuance": "..." }, ... ],
+              "de": [ { "text": "...", "nuance": "..." }, ... ],
+              "recommendation": "Explain which option is best and why."
+            }
+          `;
+  
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [{ role: "user", content: prompt }],
+              response_format: { type: "json_object" }
+            })
+          });
+  
+          const data = await response.json();
+          
+          if (data.error) {
+            throw new Error(data.error.message);
+          }
+  
+          const content = JSON.parse(data.choices[0].message.content);
+          renderTranslationResult(content);
+  
+        } catch (err) {
+          resultArea.innerHTML = `<div style="color:red; padding:10px;">Error: ${err.message}</div>`;
+        } finally {
+          btn.disabled = false;
+          btn.innerText = '번역 실행';
         }
-
-        const content = JSON.parse(data.choices[0].message.content);
-        renderTranslationResult(content);
-
-      } catch (err) {
-        resultArea.innerHTML = `<div style="color:red; padding:10px;">Error: ${err.message}</div>`;
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '번역 실행';
-      }
-    };
+      };
+    }
 
     function renderTranslationResult(data) {
       const container = document.getElementById('translationResult');
