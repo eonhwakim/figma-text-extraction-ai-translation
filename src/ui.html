@@ -3,125 +3,462 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body { font-family: Inter, sans-serif; padding: 16px; font-size: 13px; color: #333; margin: 0; background: #F5F5F5; }
-    
-    .header { margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-    h3 { margin: 0; font-size: 14px; font-weight: 600; }
-    .badge { background: #E5F4FF; color: #0077C8; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
-    
+    :root {
+      /* Colors - More neutral & sophisticated palette */
+      --primary-color: #18A0FB; /* Figma Blue */
+      --primary-hover: #0D8CE0;
+      --purple-color: #7B61FF; /* Figma Purple */
+      --purple-hover: #674CE5;
+      --danger-color: #F24822;
+      
+      --text-main: #333333;
+      --text-sub: #8e8e8e; /* Lighter sub text for cleaner look */
+      --text-on-primary: #ffffff;
+
+      --bg-main: #ffffff;
+      --bg-sub: #F9F9F9; /* Very subtle grey */
+      --bg-hover: #F0F0F0;
+      
+      --border-color: #E6E6E6;
+      --border-focus: #18A0FB;
+
+      /* Sharp & Clean */
+      --radius-sm: 2px;
+      --radius-md: 4px; /* Reduced from 8px for sharper look */
+      
+      /* Subtle Depth */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family);
+      font-size: 12px; /* Slightly smaller for density */
+      color: var(--text-main);
+      margin: 0;
+      background: var(--bg-main);
+      line-height: 1.5;
+    }
+
+    /* Scrollbar - Minimalist */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #E6E6E6; border-radius: 4px; border: 2px solid var(--bg-main); }
+    ::-webkit-scrollbar-thumb:hover { background: #D1D1D1; }
+
     /* Layout */
     .container { display: flex; height: 100vh; overflow: hidden; }
-    
-    /* Left Panel */
-    .panel-left { width: 340px; border-right: 1px solid #ddd; display: flex; flex-direction: column; background: #F5F5F5; flex-shrink: 0; }
-    
-    /* Right Panel */
-    .panel-right { flex: 1; display: flex; flex-direction: column; background: white; overflow-y: auto; padding: 16px; }
-    
-    /* View Management (Deprecating toggle, making them panels) */
-    /* .view { display: none; } */
-    /* .view.active { display: block; } */
 
-    /* List View Styles */
+    /* Panels */
+    .panel-left {
+      width: 320px;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-sub);
+      flex-shrink: 0;
+    }
+    .panel-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-main);
+      overflow-y: auto;
+      padding: 24px 32px; /* More breathing room */
+    }
+
+    /* Headers */
+    .header {
+      height: 48px;
+      padding: 0 16px;
+      background: var(--bg-sub);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    h3 { 
+      margin: 0; 
+      font-size: 12px; 
+      font-weight: 600; 
+      color: var(--text-main); 
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .badge {
+      background: #E6E6E6;
+      color: #333;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 10px;
+      font-weight: 600;
+      display: inline-block;
+      min-width: 16px;
+      text-align: center;
+    }
+
+    /* Buttons */
+    button {
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    button:disabled { opacity: 0.4; cursor: default !important; }
+    button:active { transform: translateY(1px); }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      color: var(--text-sub);
+      border-radius: var(--radius-sm);
+    }
+    .icon-btn:hover:not(:disabled) { background: rgba(0,0,0,0.05); color: var(--text-main); }
+    
+    .btn-primary {
+      background: var(--primary-color);
+      color: var(--text-on-primary);
+      font-weight: 500;
+      padding: 6px 16px;
+      border: 1px solid var(--primary-color);
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+    .btn-purple {
+      background: var(--purple-color);
+      color: white;
+      font-weight: 500;
+      padding: 6px 16px;
+      border: 1px solid var(--purple-color);
+    }
+    .btn-purple:hover:not(:disabled) { background: var(--purple-hover); border-color: var(--purple-hover); }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      font-weight: 500;
+      padding: 6px 16px;
+    }
+    .btn-secondary:hover:not(:disabled) { border-color: #ccc; background: #fafafa; }
+
+    .btn-text {
+      background: none;
+      color: var(--text-sub);
+      font-size: 11px;
+      padding: 0;
+      text-decoration: none;
+      border: none;
+    }
+    .btn-text:hover { color: var(--primary-color); text-decoration: underline; }
+
+    /* List View */
     .list { 
-      display: flex; flex-direction: column; gap: 8px; 
-      flex: 1; overflow-y: auto; padding-bottom: 10px;
+      padding: 8px;
+      display: flex; 
+      flex-direction: column; 
+      gap: 4px; /* Tighter gap */
+      flex: 1; 
+      overflow-y: auto; 
     }
     
     .item { 
-      display: flex; gap: 8px; align-items: center; 
-      border: 1px solid #e0e0e0; 
-      padding: 8px 10px; 
-      border-radius: 6px; 
-      background: white; 
-      transition: all 0.2s;
+      display: flex; 
+      gap: 8px; 
+      align-items: center; /* Center vertically */
+      background: white;
+      border: 1px solid transparent; /* No border by default for cleaner look */
+      padding: 6px 10px; 
+      border-radius: var(--radius-sm); 
+      transition: background 0.1s;
+      position: relative;
     }
-    .item:hover { border-color: #bbb; }
-    .item.merge-selected { border-color: #9747FF; background: #F3E5FF; }
-    .item.excluded { opacity: 0.6; }
-    .item.excluded .content { text-decoration: line-through; color: #aaa; }
+    .item:hover { 
+      background: var(--bg-hover);
+    }
+    .item.merge-selected { 
+      background: #F0F5FF; /* Subtle blue tint */
+      border: 1px solid #B4D5FF;
+    }
+    /* Active State for Translate Button (if needed) */
+    .item.active-detail {
+        background: #F0F9FF; /* Light blue background for currently viewing item */
+        border: 1px solid #BAE6FD;
+    }
+
+    .item.excluded { opacity: 0.5; }
+    .item.excluded .content { text-decoration: line-through; color: var(--text-sub); }
     
     .checkbox-wrapper { display: flex; align-items: center; }
-    input[type="checkbox"] { cursor: pointer; width: 16px; height: 16px; margin: 0; accent-color: #18A0FB; }
+    input[type="checkbox"] { 
+      cursor: pointer; 
+      width: 14px; 
+      height: 14px; 
+      margin: 0; 
+      accent-color: var(--primary-color);
+      border-radius: 2px; /* Sharper checkbox */
+    }
 
-    .content-wrapper { flex: 1; cursor: pointer; overflow: hidden; }
-    .content { white-space: pre-wrap; word-break: break-all; line-height: 1.4; color: #333; }
+    .content-wrapper { flex: 1; cursor: pointer; min-width: 0; display:flex; flex-direction:column; justify-content:center; }
+    .content { 
+      white-space: pre-wrap; 
+      word-break: break-all; 
+      line-height: 1.4; 
+      color: var(--text-main); 
+      font-size: 12px;
+    }
     
     .merged-badge { 
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 10px; color: #fff; background: #9747FF; 
-      padding: 2px 6px; border-radius: 10px; margin-bottom: 4px;
-      cursor: pointer; transition: background 0.2s;
+      display: inline-flex; 
+      align-items: center; 
+      gap: 4px;
+      font-size: 9px; 
+      color: #fff; 
+      background: var(--purple-color); 
+      padding: 1px 5px; 
+      border-radius: 2px; 
+      margin-bottom: 2px;
+      cursor: pointer; 
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      align-self: flex-start;
     }
-    .merged-badge:hover { background: #7B2FDB; }
-    .merged-badge .close-icon { font-weight: bold; font-size: 9px; }
-
-    .action-btn {
-      width: 24px; height: 24px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 4px; border: 1px solid #ddd;
-      background: white; color: #666; cursor: pointer;
-      font-size: 14px; flex-shrink: 0;
+    .merged-badge:hover { background: var(--purple-hover); }
+    
+    .item-actions {
+      display: flex;
+      flex-direction: row; /* Horizontal layout */
+      gap: 4px;
+      opacity: 1; /* Always visible */
+      flex-shrink: 0;
+      align-items: center;
     }
-    .action-btn:hover { background: #f0f0f0; border-color: #ccc; }
-    .item.merge-selected .merge-btn { background: #9747FF; color: white; border-color: #9747FF; }
 
-    .empty { height: 100%; display: flex; align-items: center; justify-content: center; color: #999; text-align: center; }
+    .action-btn-small {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-sub);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .action-btn-small:hover { background: rgba(0,0,0,0.05); color: var(--text-main); }
+    
+    /* Active/Selected Button States */
+    .item.merge-selected .merge-btn { 
+      color: white;
+      background: var(--purple-color);
+      border-color: var(--purple-color);
+    }
+    
+    /* When detail is open for this item, highlight translate button */
+    .item.active-detail .translate-icon {
+        color: white;
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .empty { 
+      height: 100%; 
+      display: flex; 
+      flex-direction: column;
+      align-items: center; 
+      justify-content: center; 
+      color: var(--text-sub); 
+      text-align: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .empty-icon { font-size: 24px; opacity: 0.3; margin-bottom: 4px; filter: grayscale(1); }
 
     .footer {
-      padding: 12px 16px; background: white; border-top: 1px solid #ddd;
-      display: flex; gap: 8px; flex-shrink: 0;
+      padding: 12px 16px; 
+      background: white; 
+      border-top: 1px solid var(--border-color);
+      display: flex; 
+      gap: 8px; 
+      flex-shrink: 0;
+    }
+    .footer button { flex: 1; height: 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+    /* Detail & Batch View */
+    .detail-placeholder { 
+      color: var(--text-sub); 
+      text-align: center; 
+      margin: auto;
+      font-size: 13px; 
+      max-width: 240px;
+      line-height: 1.6;
+    }
+    .detail-placeholder strong { color: var(--text-main); font-weight: 600; }
+
+    .detail-header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      margin-bottom: 24px; 
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+    .detail-header h3 { font-size: 14px; text-transform: none; }
+
+    .section { 
+      margin-bottom: 24px; 
+    }
+    .section-title { 
+      font-weight: 600; 
+      margin-bottom: 8px; 
+      font-size: 11px; 
+      color: var(--text-sub); 
+      text-transform: uppercase; 
+      letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     
-    button {
-      flex: 1; padding: 10px; border: none; border-radius: 6px; 
-      font-weight: 600; cursor: pointer; font-size: 12px;
+    .source-text { 
+      font-size: 14px; 
+      line-height: 1.6;
+      color: var(--text-main);
+      padding: 16px; 
+      background: #FAFAFA; 
+      border: 1px solid var(--border-color); 
+      border-radius: var(--radius-sm); 
+      margin-bottom: 24px;
+      white-space: pre-wrap;
     }
-    .btn-secondary { background: #E5F4FF; color: #0077C8; }
-    .btn-secondary:hover { background: #CCE9FF; }
-    .btn-purple { background: #9747FF; color: white; }
-    .btn-purple:hover { background: #8433EA; }
-    button:disabled { background: #ccc; color: #fff; cursor: default; }
 
-    /* Detail View Styles */
-    .detail-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-    /* .back-btn { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px; color: #666; } */
-    
-    .detail-placeholder { color: #999; text-align: center; margin-top: 40%; font-size: 13px; }
+    .match-item { 
+      padding: 8px 12px; 
+      border: 1px solid var(--border-color); 
+      border-radius: var(--radius-sm); 
+      margin-bottom: 6px; 
+      font-size: 12px; 
+      background: white;
+    }
+    .match-key { color: var(--text-sub); font-size: 10px; margin-bottom: 4px; display:flex; align-items:center; letter-spacing: 0.02em;}
+    .match-val { color: var(--text-main); font-weight: 500; }
+    .match-tag { font-size: 9px; padding: 1px 4px; border-radius: 2px; margin-left: auto; font-weight:600; text-transform: uppercase; }
+    .tag-exact { background: #E6FFFA; color: #047481; }
+    .tag-pattern { background: #EBF8FF; color: #2C5282; }
+    .tag-partial { background: #FFFAF0; color: #9C4221; }
 
-    .section { background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px; border: 1px solid #e0e0e0; }
-    .section-title { font-weight: 600; margin-bottom: 8px; font-size: 12px; color: #555; display: flex; justify-content: space-between; }
-    
-    .source-text { font-size: 14px; font-weight: 500; margin-bottom: 12px; padding: 12px; background: #fff; border: 1px solid #ddd; border-radius: 6px; }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 12px;
+      resize: vertical;
+      box-sizing: border-box;
+      background: #FAFAFA;
+      color: var(--text-main);
+    }
+    textarea:focus { outline: none; border-color: var(--border-focus); background: white; }
 
-    .match-item { padding: 8px; background: #f9f9f9; border-radius: 4px; margin-bottom: 6px; font-size: 12px; }
-    .match-key { color: #888; font-size: 10px; margin-bottom: 2px; }
-    .match-val { color: #333; font-weight: 500; }
-    .match-tag { font-size: 9px; padding: 1px 4px; border-radius: 3px; margin-left: 4px; }
-    .tag-exact { background: #d1fae5; color: #065f46; }
-    .tag-pattern { background: #e0e7ff; color: #3730a3; }
-    .tag-partial { background: #fff7ed; color: #9a3412; }
-
-    .api-key-input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px; }
-    .translate-btn { width: 100%; background: #222; color: white; }
+    .translate-btn { width: 100%; background: #333; color: white; padding: 10px; border-radius: var(--radius-sm); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; font-weight: 600;}
     .translate-btn:hover { background: #000; }
 
-    .suggestion { margin-top: 12px; border-top: 1px solid #eee; padding-top: 8px; }
-    .lang-title { font-weight: 600; color: #0077C8; margin-bottom: 4px; font-size: 12px; }
-    .trans-option { margin-bottom: 8px; padding-left: 8px; border-left: 2px solid #ddd; }
-    .trans-text { font-weight: 500; color: #333; }
-    .trans-nuance { font-size: 11px; color: #666; margin-top: 2px; }
-    .recommendation { margin-top: 12px; padding: 8px; background: #f0fdf4; border-radius: 4px; color: #166534; font-size: 12px; }
+    /* Translation Results */
+    .suggestion { 
+      margin-top: 16px; 
+      padding-top: 16px; 
+      border-top: 1px solid var(--border-color); 
+    }
+    .lang-title { 
+      font-weight: 600; 
+      color: var(--text-main); 
+      margin-bottom: 12px; 
+      font-size: 12px; 
+      display:flex; align-items:center; gap:6px;
+    }
+    .trans-option { 
+      margin-bottom: 8px; 
+      padding: 12px; 
+      background: white; 
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      transition: border-color 0.2s;
+    }
+    .trans-option:hover { border-color: #999; }
+    .trans-text { font-weight: 500; color: var(--text-main); font-size: 13px; margin-bottom: 4px; }
+    .trans-nuance { font-size: 11px; color: var(--text-sub); }
+    
+    .recommendation { 
+      margin-top: 16px; 
+      padding: 12px; 
+      background: #F0FDFA; 
+      border: 1px solid #CCFBF1;
+      border-radius: var(--radius-sm); 
+      color: #0F766E; 
+      font-size: 12px; 
+      line-height: 1.5;
+    }
 
-    .loading { text-align: center; color: #999; padding: 20px; }
+    .loading { text-align: center; color: var(--text-sub); padding: 30px; font-size: 12px; }
 
     /* Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
-    .modal { background: white; padding: 16px; border-radius: 8px; width: 280px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .modal h4 { margin: 0 0 12px 0; font-size: 14px; color: #333; }
-    .modal input { width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: monospace; }
-    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; }
-    .modal-footer button { padding: 6px 12px; font-weight: 500; }
+    .modal-overlay { 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      background: rgba(0, 0, 0, 0.4); 
+      display: none; 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 100; 
+    }
+    .modal { 
+      background: white; 
+      padding: 24px; 
+      border-radius: var(--radius-md); 
+      width: 320px; 
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); 
+    }
+    .modal h4 { margin: 0 0 16px 0; font-size: 14px; color: var(--text-main); }
+    .modal input { 
+      width: 100%; padding: 10px; margin-bottom: 8px; 
+      border: 1px solid var(--border-color); 
+      border-radius: var(--radius-sm); 
+      box-sizing: border-box; 
+      font-family: monospace; 
+      font-size: 12px;
+    }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+    
+    /* Batch List */
+    .batch-list-container {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #FAFAFA;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0;
+    }
+    .batch-item-row {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 12px;
+      color: var(--text-main);
+      background: white;
+    }
+    .batch-item-row:last-child { border-bottom: none; }
+    .batch-item-row:nth-child(even) { background: #FAFAFA; }
+
   </style>
 </head>
 <body>
@@ -131,25 +468,34 @@
       <!-- EXTRACT VIEW -->
       <div id="extractView" style="display:flex; flex-direction:column; height:100%;">
         <div class="header">
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
             <h3>추출된 텍스트</h3>
-            <span id="count" class="badge">0개</span>
-            <button id="btnAdd" title="현재 선택된 텍스트 추가 (Cmd+Enter)" style="padding: 2px 6px; width:auto; background:none; border:1px solid #ddd; color:#0077C8; font-weight:bold;">+</button>
+            <span id="count" class="badge">0</span>
+            <button id="btnAdd" class="icon-btn" title="선택된 텍스트 추가 (Cmd+Enter)" style="color:var(--primary-color);">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 1 .5.5v3.5h3.5a.5.5 0 0 1 0 1H8.5v3.5a.5.5 0 0 1-1 0V8.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/></svg>
+            </button>
           </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <button id="btnSettings" title="설정 (API Key)" style="padding: 2px 6px; width:auto; background:none; border:1px solid #ddd; color:#666;">⚙️</button>
-            <button id="btnClear" title="목록 초기화" style="padding: 2px 6px; width:auto; background:none; border:1px solid #ddd; color:#666;">🗑️</button>
+          <div style="display:flex; align-items:center; gap:2px;">
+            <button id="btnSettings" class="icon-btn" title="설정 (API Key)">
+               <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zM8.354 2.65a.544.544 0 0 0-.708 0l-.145.492a1.873 1.873 0 0 0-2.694 1.116l-.491.144c-.282.083-.4.407-.229.63l.348.455c.48.629.48 1.503 0 2.132l-.348.454a.397.397 0 0 0 .23.631l.49.144a1.873 1.873 0 0 0 2.695 1.116l.145.492c.082.28.407.4.63.229l.454-.349a1.734 1.734 0 0 0 2.132 0l.455.349c.222.17.547.051.629-.23l.145-.491a1.873 1.873 0 0 0 2.694-1.116l.491-.145c.282-.082.4-.407.23-.63l-.349-.454a1.735 1.735 0 0 0 0-2.133l.349-.454c.17-.223.051-.548-.23-.63l-.49-.145a1.873 1.873 0 0 0-2.695-1.116l-.145-.491c-.082-.281-.407-.4-.629-.23l-.455.349a1.734 1.734 0 0 0-2.132 0l-.454-.349c-.223-.17-.548-.051-.63.23z"/></svg>
+            </button>
+            <button id="btnClear" class="icon-btn" title="목록 초기화">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+            </button>
           </div>
         </div>
         
         <div id="list" class="list">
-          <div class="empty">프레임이나 그룹을 선택하세요.</div>
+          <div class="empty">
+            <div class="empty-icon">📂</div>
+            <div>추출할 텍스트 레이어를<br>선택 후 추가하세요.</div>
+          </div>
         </div>
 
         <div class="footer">
           <button id="btnCopy" class="btn-secondary" disabled>복사</button>
-          <button id="btnBatch" class="btn-secondary" style="background:#FFF0F5; color:#C2185B;" disabled>일괄 번역</button>
-          <button id="btnMergeAction" class="btn-purple" disabled>선택 항목 합치기</button>
+          <button id="btnBatch" class="btn-secondary" style="background:#FFF1F2; color:#BE123C; border-color:#FECDD3;" disabled>일괄 번역</button>
+          <button id="btnMergeAction" class="btn-purple" disabled>합치기</button>
         </div>
       </div>
     </div>
@@ -157,14 +503,14 @@
     <!-- RIGHT PANEL -->
     <div id="detailView" class="panel-right">
       <div id="detailPlaceholder" class="detail-placeholder">
-        왼쪽 목록에서 텍스트의 <strong>T</strong> 버튼을 눌러 상세 정보를 확인하거나,<br>
-        체크박스 선택 후 <strong>일괄 번역</strong>을 이용하세요.
+        목록에서 항목을 선택하여 상세 정보를 확인하거나<br>
+        <strong>일괄 번역</strong> 기능을 사용하세요.
       </div>
 
       <!-- Single Detail View -->
       <div id="detailContent" style="display:none;">
         <div class="detail-header">
-          <h3>번역 & 리소스 확인</h3>
+          <h3>번역 및 리소스 확인</h3>
         </div>
         
         <div class="source-text" id="detailSourceText"></div>
@@ -177,46 +523,49 @@
         </div>
 
         <div class="section">
-          <div class="section-title">Context (AI 번역 참고용)</div>
-          <textarea id="contextInput" style="width:100%; height:60px; border:1px solid #ddd; border-radius:4px; padding:8px; box-sizing:border-box; font-family:inherit; resize:vertical;" placeholder="번역 시 참고할 상황 설명이나 문맥을 입력하세요. (예: 로그인 화면의 에러 메시지)"></textarea>
+          <div class="section-title">Context (선택 사항)</div>
+          <textarea id="contextInput" placeholder="번역 시 참고할 문맥을 입력하세요 (예: 로그인 화면 에러 메시지)"></textarea>
         </div>
 
         <div class="section">
           <div class="section-title">
-            AI 번역 제안 (OpenAI)
-            <button id="btnSetKey" style="width: auto; padding: 2px 6px; font-size: 10px; background: none; color: #999; border: 1px solid #eee;">API Key 설정</button>
+            AI 번역 제안
+            <button id="btnSetKey" class="btn-text">API Key 설정</button>
           </div>
-          <!-- Inline API Key Section Removed -> Use Modal -->
           
           <div id="translationResult"></div>
-          <button id="btnTranslate" class="translate-btn">AI 번역 실행</button>
+          <div style="margin-top: 12px;">
+            <button id="btnTranslate" class="translate-btn">번역 실행</button>
+          </div>
         </div>
       </div>
 
       <!-- Batch View -->
       <div id="batchView" style="display:none;">
         <div class="detail-header">
-          <h3>일괄 AI 번역 (선택된 항목)</h3>
+          <h3>일괄 AI 번역</h3>
         </div>
 
         <div class="section">
-           <div class="section-title">선택된 텍스트 목록 (<span id="batchCount">0</span>개)</div>
-           <div id="batchList" style="max-height: 150px; overflow-y: auto; background: #fafafa; border: 1px solid #eee; padding: 8px; border-radius: 4px; font-size: 11px; color: #555;"></div>
+           <div class="section-title">선택된 항목 (<span id="batchCount">0</span>개)</div>
+           <div id="batchList" class="batch-list-container"></div>
         </div>
 
         <div class="section">
           <div class="section-title">Context (공통 적용)</div>
-          <textarea id="batchContextInput" style="width:100%; height:60px; border:1px solid #ddd; border-radius:4px; padding:8px; box-sizing:border-box; font-family:inherit; resize:vertical;" placeholder="번역 시 참고할 상황 설명이나 문맥을 입력하세요. (예: 로그인 화면의 에러 메시지)"></textarea>
+          <textarea id="batchContextInput" placeholder="모든 항목에 적용할 문맥을 입력하세요"></textarea>
         </div>
 
         <div class="section">
           <div class="section-title">
-            AI 번역 실행 (OpenAI)
-            <button id="btnSetKeyBatch" style="width: auto; padding: 2px 6px; font-size: 10px; background: none; color: #999; border: 1px solid #eee;">API Key 설정</button>
+            실행
+            <button id="btnSetKeyBatch" class="btn-text">API Key 설정</button>
           </div>
           
           <div id="batchResult"></div>
-          <button id="btnBatchRun" class="translate-btn">일괄 번역 실행</button>
+          <div style="margin-top: 12px;">
+            <button id="btnBatchRun" class="translate-btn">일괄 번역 실행</button>
+          </div>
         </div>
       </div>
     </div>
@@ -227,13 +576,12 @@
     <div class="modal">
       <h4>OpenAI API Key 설정</h4>
       <input type="password" id="modalApiKeyInput" placeholder="sk-...">
-      <div style="font-size: 11px; color: #666; margin-bottom: 12px; line-height: 1.4;">
-        OpenAI API Key를 입력하세요.<br>
+      <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5;">
         키는 브라우저 로컬 스토리지에만 저장됩니다.
       </div>
       <div class="modal-footer">
-        <button id="btnCancelKey" style="background: #eee; color: #333;">취소</button>
-        <button id="btnSaveKey" class="btn-purple">저장</button>
+        <button id="btnCancelKey" class="btn-secondary">취소</button>
+        <button id="btnSaveKey" class="btn-primary">저장</button>
       </div>
     </div>
   </div>
@@ -243,6 +591,7 @@
     let currentDetailItem = null;
     let currentDetailMatches = [];
     let batchResults = null; // 번역 결과 저장용
+    let batchContext = '';
 
     // TODO: 코드에 API Key를 직접 넣으려면 아래 빈 문자열 대신 키를 입력하세요.
     let apiKey = '';
@@ -317,10 +666,7 @@
     };
 
     window.addEventListener('keydown', (e) => {
-      // Shortcut to add current selection: Shift + A or similar?
-      // But focus is usually on Canvas. This works only if UI is focused.
       if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-        // Cmd+Enter to Add Selection?
         parent.postMessage({ pluginMessage: { type: 'add-selection' } }, '*');
       }
     });
@@ -330,12 +676,11 @@
       list.innerHTML = '';
       
       const checkedCount = currentData.filter(d => d.checked).length;
-      document.getElementById('count').innerText = `${checkedCount} / ${currentData.length}`;
+      document.getElementById('count').innerText = `${checkedCount}`;
       
       const btns = document.querySelectorAll('#listView button:not(.action-btn):not(#btnClear)');
       if (currentData.length === 0) {
-        list.innerHTML = `<div class="empty">프레임이나 그룹을 선택하세요.</div>`;
-        btns.forEach(b => b.disabled = true);
+        list.innerHTML = `<div class="empty"><div class="empty-icon">📂</div><div>추출할 텍스트 레이어를<br>선택 후 추가하세요.</div></div>`;
         return;
       }
       
@@ -345,27 +690,32 @@
       const mergeCount = currentData.filter(d => d.mergeSelected).length;
       const mergeBtn = document.getElementById('btnMergeAction');
       mergeBtn.disabled = mergeCount < 2;
-      mergeBtn.innerText = mergeCount > 0 ? `${mergeCount}개 합치기` : "선택 항목 합치기";
+      mergeBtn.innerText = mergeCount > 0 ? `합치기 (${mergeCount})` : "합치기";
 
       currentData.forEach((item, index) => {
         const div = document.createElement('div');
-        div.className = `item ${item.checked ? '' : 'excluded'} ${item.mergeSelected ? 'merge-selected' : ''}`;
+        // Check if this item is the one currently being viewed in detail
+        const isDetailActive = currentDetailItem && currentDetailItem.ids.join(',') === item.ids.join(',');
+        
+        div.className = `item ${item.checked ? '' : 'excluded'} ${item.mergeSelected ? 'merge-selected' : ''} ${isDetailActive ? 'active-detail' : ''}`;
         
         const isMerged = !!item.originalItems;
         
         div.innerHTML = `
-          <div class="checkbox-wrapper" title="추출 제외">
+          <div class="checkbox-wrapper" title="목록에서 제외">
             <input type="checkbox" ${item.checked ? 'checked' : ''}>
           </div>
           <div class="content-wrapper">
-            ${isMerged ? '<span class="merged-badge" title="클릭하여 병합 해제">MERGED <span class="close-icon">✕</span></span>' : ''}
+            ${isMerged ? '<span class="merged-badge" title="병합 해제하려면 클릭">MERGED</span>' : ''}
             <div class="content">${escapeHtml(item.text)}</div>
           </div>
-          <div style="display:flex; flex-direction:column; gap:2px;">
-             <div class="action-btn translate-icon" title="번역 및 확인">T</div>
-          </div>
-          <div class="action-btn merge-btn" title="병합 대상으로 선택">
-            ${item.mergeSelected ? '✓' : '+'}
+          <div class="item-actions">
+             <div class="action-btn-small translate-icon" title="번역 및 확인">
+               <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M12.5 14h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5zM3 4v9h9V4H3z"/><path d="M5.5 6.5A.5.5 0 0 1 6 6h4a.5.5 0 0 1 0 1H8.5v4a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1-.5-.5z"/></svg>
+             </div>
+             <div class="action-btn-small merge-btn" title="병합 대상으로 선택">
+               ${item.mergeSelected ? '✓' : '+'}
+             </div>
           </div>
         `;
         
@@ -373,12 +723,10 @@
           const isChecked = e.target.checked;
           
           if (!isChecked) {
-            // 체크 해제 시 -> 목록에서 제거 + 하이라이트 제거
             const idx = currentData.indexOf(item);
             if (idx > -1) {
               currentData.splice(idx, 1);
             }
-            // 하이라이트 제거 메시지 전송
             parent.postMessage({ pluginMessage: { type: 'clear-highlights', ids: item.ids } }, '*');
           } else {
             item.checked = true;
@@ -401,7 +749,6 @@
           };
         }
         
-        // Translate Button (T icon)
         const transIcon = div.querySelector('.translate-icon');
         if (transIcon) {
           transIcon.onclick = (e) => {
@@ -426,19 +773,23 @@
     }
 
     document.getElementById('btnClear').onclick = () => {
-      if (confirm('목록을 초기화하시겠습니까?')) {
+      if (confirm('전체 목록을 초기화하시겠습니까?')) {
         currentData = [];
-        batchResults = null; // 배치 결과도 초기화
-        batchContext = ''; // Context도 초기화
+        batchResults = null; 
+        batchContext = ''; 
         document.getElementById('batchContextInput').value = '';
+        currentDetailItem = null; // Clear detail view ref
         
         parent.postMessage({ pluginMessage: { type: 'save-batch-results', data: null } }, '*');
         parent.postMessage({ pluginMessage: { type: 'save-batch-context', data: '' } }, '*');
-        parent.postMessage({ pluginMessage: { type: 'save-state', data: [] } }, '*'); // 목록 상태 초기화 저장
-        parent.postMessage({ pluginMessage: { type: 'clear-highlights' } }, '*'); // 캔버스 하이라이트 제거
+        parent.postMessage({ pluginMessage: { type: 'save-state', data: [] } }, '*');
+        parent.postMessage({ pluginMessage: { type: 'clear-highlights' } }, '*');
         
         render();
-        // saveState(); -> 위에서 이미 save-state 보냄
+        // Hide detail view
+        document.getElementById('detailContent').style.display = 'none';
+        document.getElementById('batchView').style.display = 'none';
+        document.getElementById('detailPlaceholder').style.display = 'block';
       }
     };
 
@@ -451,7 +802,9 @@
       currentDetailItem = item;
       currentDetailMatches = [];
       
-      // Update Detail UI
+      // Re-render list to show active state
+      render();
+
       document.getElementById('detailPlaceholder').style.display = 'none';
       document.getElementById('batchView').style.display = 'none';
       document.getElementById('detailContent').style.display = 'block';
@@ -460,14 +813,13 @@
       document.getElementById('resourceMatches').innerHTML = '<div class="loading">검색 중...</div>';
       document.getElementById('translationResult').innerHTML = '';
       
-      // Request matches from code.ts
       parent.postMessage({ pluginMessage: { type: 'check-translation', text: item.text } }, '*');
     }
 
     function renderResourceMatches(matches, originalText) {
       const container = document.getElementById('resourceMatches');
       if (!matches || matches.length === 0) {
-        container.innerHTML = '<div class="match-item" style="color:#888;">일치하는 리소스가 없습니다.</div>';
+        container.innerHTML = '<div class="match-item" style="color:var(--text-sub); text-align:center; border:none; background:none;">일치하는 리소스가 없습니다.</div>';
         return;
       }
       
@@ -479,16 +831,15 @@
         return `
         <div class="match-item">
           <div class="match-key">${m.key} <span class="match-tag ${tagClass}">${m.type}</span></div>
-          <div class="match-val" style="background: #e3f2fd; color: #0d47a1; padding: 4px 6px; border-radius: 4px; font-weight: 700; margin-bottom: 4px;">🇺🇸 ${escapeHtml(m.value)}</div>
-          ${m.deValue ? `<div class="match-val" style="margin-top:2px; color:#555;">🇩🇪 ${escapeHtml(m.deValue)}</div>` : ''}
-          ${m.frValue ? `<div class="match-val" style="margin-top:2px; color:#555;">🇫🇷 ${escapeHtml(m.frValue)}</div>` : ''}
+          <div class="match-val" style="color: #0369A1; font-weight: 600; margin-bottom: 2px; display:inline-block;">🇺🇸 ${escapeHtml(m.value)}</div>
+          ${m.deValue ? `<div class="match-val" style="margin-top:2px; color:var(--text-sub); font-size:11px;">🇩🇪 ${escapeHtml(m.deValue)}</div>` : ''}
+          ${m.frValue ? `<div class="match-val" style="margin-top:2px; color:var(--text-sub); font-size:11px;">🇫🇷 ${escapeHtml(m.frValue)}</div>` : ''}
         </div>
       `}).join('');
     }
 
     // --- Batch View Logic ---
     
-    // Context 입력 시 자동 저장 (Debounce 없이 간단하게 change 이벤트나 blur 사용)
     document.getElementById('batchContextInput').addEventListener('input', (e) => {
       const val = e.target.value;
       batchContext = val;
@@ -507,21 +858,20 @@
        
        const listEl = document.getElementById('batchList');
        listEl.innerHTML = selectedItems.map(item => `
-         <div style="margin-bottom:4px; border-bottom:1px solid #eee; padding-bottom:2px;">
+         <div class="batch-item-row">
            ${escapeHtml(item.text)}
          </div>
        `).join('');
        
        document.getElementById('batchResult').innerHTML = '';
 
-       // 저장된 결과가 있으면 복원
        if (batchResults) {
          renderBatchResults(batchResults);
        }
     };
 
     document.getElementById('btnSetKeyBatch').onclick = () => {
-        document.getElementById('btnSetKey').click(); // Reuse existing
+        document.getElementById('btnSetKey').click(); 
     };
 
     document.getElementById('btnBatchRun').onclick = () => {
@@ -535,10 +885,9 @@
 
         const btn = document.getElementById('btnBatchRun');
         btn.disabled = true;
-        btn.innerText = '리소스 검색 및 번역 중...';
-        document.getElementById('batchResult').innerHTML = '<div class="loading">기존 리소스 검색 중...</div>';
+        btn.innerText = '처리 중...';
+        document.getElementById('batchResult').innerHTML = '<div class="loading">리소스 검색 중...</div>';
 
-        // 1. Request matches for all items
         parent.postMessage({ pluginMessage: { type: 'check-batch-translation', items: selectedItems } }, '*');
     };
 
@@ -548,9 +897,8 @@
         const context = document.getElementById('batchContextInput').value.trim();
 
         try {
-            resultArea.innerHTML = '<div class="loading">OpenAI 번역 요청 중...</div>';
+            resultArea.innerHTML = '<div class="loading">번역 요청 중...</div>';
 
-            // Construct Prompt
             const itemsPrompt = itemsWithMatches.map((item, idx) => {
                 let refText = "";
                 if (item.matches && item.matches.length > 0) {
@@ -569,7 +917,12 @@
               Context: Mobile app/webtoon platform (Tappytoon).
               ${context ? `User Context: ${context}` : ''}
               
-              Each item may have "Matches" listed below it. These are existing similar translations in our database. Use them as a reference for consistency, but prioritize the User Context if it differs.
+              Requirements:
+              1. Provide 3 options for each language.
+              2. Explain the nuance for each option briefly in Korean.
+              3. Recommend the best option in Korean.
+
+              Each item may have "Matches" listed below it. These are existing similar translations in our database. Use them as a reference for consistency.
 
               List of items to translate:
               ${itemsPrompt}
@@ -607,7 +960,6 @@
 
             const content = JSON.parse(data.choices[0].message.content);
             
-            // 결과 저장 및 렌더링
             batchResults = content.results;
             parent.postMessage({ pluginMessage: { type: 'save-batch-results', data: batchResults } }, '*');
             
@@ -630,23 +982,23 @@
 
         let html = '';
         results.forEach((res, idx) => {
-             html += `<div class="section" style="border-left: 3px solid #0077C8;">
+             html += `<div class="section" style="border-left: 3px solid var(--primary-color);">
                <div style="font-weight:600; margin-bottom:8px; font-size:13px;">${idx+1}. ${escapeHtml(res.original)}</div>`;
              
              ['fr', 'de'].forEach(lang => {
                 const langName = lang === 'fr' ? '🇫🇷 French' : '🇩🇪 German';
                 const options = res[lang];
-                html += `<div style="margin-top:6px;"><div style="font-size:11px; font-weight:bold; color:#555;">${langName}</div>`;
+                html += `<div style="margin-top:8px;"><div style="font-size:12px; font-weight:600; color:var(--text-sub); margin-bottom:4px;">${langName}</div>`;
                 if (Array.isArray(options)) {
                    options.forEach(opt => {
-                       html += `<div class="trans-option" style="margin-bottom:4px;"><div class="trans-text" style="font-size:12px;">${escapeHtml(opt.text)}</div><div class="trans-nuance" style="font-size:10px;">${escapeHtml(opt.nuance)}</div></div>`;
+                       html += `<div class="trans-option" style="margin-bottom:4px;"><div class="trans-text" style="font-size:12px;">${escapeHtml(opt.text)}</div><div class="trans-nuance" style="font-size:11px;">${escapeHtml(opt.nuance)}</div></div>`;
                    });
                 }
                 html += `</div>`;
              });
              
              if (res.recommendation) {
-                 html += `<div class="recommendation" style="font-size:11px; margin-top:6px;">💡 ${escapeHtml(res.recommendation)}</div>`;
+                 html += `<div class="recommendation" style="font-size:11px; margin-top:8px;">💡 AI 추천 의견: ${escapeHtml(res.recommendation)}</div>`;
              }
              html += `</div>`;
         });
@@ -656,7 +1008,6 @@
 
     // --- OpenAI Translation Logic ---
 
-    // Open Modal Handlers
     function openSettingsModal() {
       document.getElementById('modalApiKeyInput').value = apiKey;
       document.getElementById('settingsModal').style.display = 'flex';
@@ -688,7 +1039,6 @@
     document.getElementById('btnTranslate').onclick = async () => {
       if (!apiKey) {
         openSettingsModal();
-        // alert('OpenAI API Key를 먼저 설정해주세요.');
         return;
       }
 
@@ -723,8 +1073,8 @@
           
           Requirements:
           1. Provide 3 options for each language.
-          2. Explain the nuance for each option briefly.
-          3. Recommend the best option.
+          2. Explain the nuance for each option briefly in Korean.
+          3. Recommend the best option in Korean.
           
           Output JSON format:
           {
@@ -760,7 +1110,7 @@
         resultArea.innerHTML = `<div style="color:red; padding:10px;">Error: ${err.message}</div>`;
       } finally {
         btn.disabled = false;
-        btn.innerText = 'AI 번역 실행';
+        btn.innerText = '번역 실행';
       }
     };
 
@@ -786,13 +1136,11 @@
       });
 
       if (data.recommendation) {
-        html += `<div class="recommendation"><strong>Recommendation:</strong><br>${escapeHtml(data.recommendation)}</div>`;
+        html += `<div class="recommendation"><strong>💡 AI 추천 의견:</strong><br>${escapeHtml(data.recommendation)}</div>`;
       }
 
       container.innerHTML = html;
     }
-
-    // --- Existing Helper Functions ---
 
     function unmergeItem(index) {
       const item = currentData[index];
