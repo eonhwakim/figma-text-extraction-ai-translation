@@ -15,8 +15,15 @@ async function init() {
   const savedBatchResultsStr = figma.root.getPluginData('pluginBatchResults');
   const savedContextStr = figma.root.getPluginData('pluginBatchContext');
 
-  // Local Data: Not needed here since API Key is in UI localStorage, 
-  // but if we had user-specific settings, we would use clientStorage.
+  // Local Data: Load API Key from clientStorage
+  try {
+    const apiKey = await figma.clientStorage.getAsync('openai_api_key');
+    if (apiKey) {
+       figma.ui.postMessage({ type: 'load-api-key', apiKey });
+    }
+  } catch (e) {
+    console.error('Failed to load API key', e);
+  }
 
   if (savedStateStr) {
     try {
@@ -62,6 +69,13 @@ async function init() {
 init();
 
 figma.ui.onmessage = (msg) => {
+  // API Key 저장 (Client Storage - User Specific)
+  if (msg.type === 'save-api-key') {
+     figma.clientStorage.setAsync('openai_api_key', msg.apiKey).catch(err => {
+        console.error('Failed to save API key', err);
+     });
+  }
+
   // 0. 상태 저장 (Document Shared)
   if (msg.type === 'save-state') {
     const strData = JSON.stringify(msg.data);

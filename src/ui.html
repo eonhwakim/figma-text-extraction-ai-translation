@@ -580,14 +580,20 @@
     let apiKey = '';
 
     try {
-      // 로컬 스토리지에 저장된 키가 있으면 우선 사용
-      const storedKey = localStorage.getItem('openai_api_key');
-      if (storedKey) apiKey = storedKey;
+      // 로컬 스토리지 대신 플러그인 백엔드에서 키를 로드합니다.
+      // (비동기 메시지로 load-api-key 수신 대기)
     } catch(e) {}
 
     window.onmessage = (event) => {
       const msg = event.data.pluginMessage;
       
+      if (msg.type === 'load-api-key') {
+         if (msg.apiKey) {
+           apiKey = msg.apiKey;
+           console.log('API Key loaded from clientStorage');
+         }
+      }
+
       if (msg.type === 'selection-update') {
         // Auto feature removed. Ignoring selection updates.
         return;
@@ -853,9 +859,7 @@
        }
     };
 
-    document.getElementById('btnSetKeyBatch').onclick = () => {
-        document.getElementById('btnSetKey').click(); 
-    };
+    document.getElementById('btnSetKeyBatch').onclick = openSettingsModal;
 
     document.getElementById('btnBatchRun').onclick = () => {
         const selectedItems = currentData.filter(d => d.checked);
@@ -1002,7 +1006,6 @@
     }
 
     document.getElementById('btnSettings').onclick = openSettingsModal;
-    document.getElementById('btnSetKey').onclick = openSettingsModal;
 
     document.getElementById('btnCancelKey').onclick = closeSettingsModal;
     
@@ -1013,10 +1016,15 @@
         alert('API Key를 입력해주세요.');
         return;
       }
-      apiKey = newKey;
-      localStorage.setItem('openai_api_key', apiKey);
-      closeSettingsModal();
-      alert('API Key가 저장되었습니다.');
+      
+      try {
+        apiKey = newKey;
+        // localStorage.setItem('openai_api_key', apiKey); // Not allowed in Figma
+        parent.postMessage({ pluginMessage: { type: 'save-api-key', apiKey: apiKey } }, '*');
+        closeSettingsModal();
+      } catch (e) {
+        alert('API Key 저장 중 오류가 발생했습니다: ' + e.message);
+      }
     };
 
     const btnTranslate = document.getElementById('btnTranslate');
