@@ -4,44 +4,42 @@
   <meta charset="UTF-8">
   <style>
     :root {
-      /* Colors - More neutral & sophisticated palette */
-      --primary-color: #18A0FB; /* Figma Blue */
+      /* Colors */
+      --primary-color: #18A0FB;
       --primary-hover: #0D8CE0;
-      --purple-color: #7B61FF; /* Figma Purple */
+      --purple-color: #7B61FF;
       --purple-hover: #674CE5;
+      --success-color: #1BC47D;
+      --warning-color: #F2994A;
       --danger-color: #F24822;
       
       --text-main: #333333;
-      --text-sub: #8e8e8e; /* Lighter sub text for cleaner look */
+      --text-sub: #8e8e8e;
       --text-on-primary: #ffffff;
 
       --bg-main: #ffffff;
-      --bg-sub: #F9F9F9; /* Very subtle grey */
+      --bg-sub: #F9F9F9;
       --bg-hover: #F0F0F0;
       
       --border-color: #E6E6E6;
       --border-focus: #18A0FB;
 
-      /* Sharp & Clean */
       --radius-sm: 2px;
-      --radius-md: 4px; /* Reduced from 8px for sharper look */
-      
-      /* Subtle Depth */
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --radius-md: 4px;
       
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
       font-family: var(--font-family);
-      font-size: 12px; /* Slightly smaller for density */
+      font-size: 12px;
       color: var(--text-main);
       margin: 0;
       background: var(--bg-main);
       line-height: 1.5;
     }
 
-    /* Scrollbar - Minimalist */
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #E6E6E6; border-radius: 4px; border: 2px solid var(--bg-main); }
@@ -65,1153 +63,1604 @@
       flex-direction: column;
       background: var(--bg-main);
       overflow-y: auto;
-      padding: 24px 32px; /* More breathing room */
+      padding: 24px 32px;
     }
 
-    /* Headers */
+    /* Header & Tabs */
     .header {
-      height: 48px;
-      padding: 0 16px;
+      padding: 12px 16px;
       background: var(--bg-sub);
       border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       flex-shrink: 0;
     }
-    h3 { 
-      margin: 0; 
-      font-size: 12px; 
-      font-weight: 600; 
-      color: var(--text-main); 
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .header-top {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
     }
-    
-    .badge {
-      background: #E6E6E6;
-      color: #333;
-      padding: 1px 6px;
-      border-radius: var(--radius-sm);
-      font-size: 10px;
-      font-weight: 600;
-      display: inline-block;
-      min-width: 16px;
-      text-align: center;
-    }
+    h3 { margin: 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 
-    /* Buttons */
+    .tabs { display: flex; gap: 4px; background: #E6E6E6; padding: 2px; border-radius: 4px; }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 6px 0;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 3px;
+      color: var(--text-sub);
+      transition: all 0.1s;
+    }
+    .tab:hover { color: var(--text-main); }
+    .tab.active { background: white; color: var(--primary-color); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    
+    .tab-badge { display: inline-block; background: rgba(0,0,0,0.1); border-radius: 8px; padding: 0 5px; font-size: 9px; margin-left: 4px; }
+    .tab.active .tab-badge { background: var(--primary-color); color: white; }
+
+    /* Buttons - Base */
     button {
       border: 1px solid transparent;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-md);
       cursor: pointer;
       font-family: inherit;
-      transition: all 0.1s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 6px;
       font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
     }
     button:disabled { opacity: 0.4; cursor: default !important; }
-    button:active { transform: translateY(1px); }
+    button:focus { outline: none; }
 
-    .icon-btn {
-      width: 28px;
-      height: 28px;
-      background: transparent;
-      color: var(--text-sub);
-      border-radius: var(--radius-sm);
-    }
-    .icon-btn:hover:not(:disabled) { background: rgba(0,0,0,0.05); color: var(--text-main); }
-    
-    .btn-primary {
-      background: var(--primary-color);
-      color: var(--text-on-primary);
-      font-weight: 500;
-      padding: 6px 16px;
-      border: 1px solid var(--primary-color);
-    }
-    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
-
-    .btn-purple {
-      background: var(--purple-color);
-      color: white;
-      font-weight: 500;
-      padding: 6px 16px;
-      border: 1px solid var(--purple-color);
-    }
-    .btn-purple:hover:not(:disabled) { background: var(--purple-hover); border-color: var(--purple-hover); }
-
-    .btn-secondary {
-      background: white;
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      font-weight: 500;
-      padding: 6px 16px;
-    }
-    .btn-secondary:hover:not(:disabled) { border-color: #ccc; background: #fafafa; }
-
-    .btn-text {
-      background: none;
-      color: var(--text-sub);
-      font-size: 11px;
-      padding: 0;
-      text-decoration: none;
-      border: none;
-    }
-    .btn-text:hover { color: var(--primary-color); text-decoration: underline; }
-
-    /* List View */
-    .list { 
-      padding: 8px;
-      display: flex; 
-      flex-direction: column; 
-      gap: 4px; /* Tighter gap */
-      flex: 1; 
-      overflow-y: auto; 
-    }
-    
-    .item { 
-      display: flex; 
-      gap: 8px; 
-      align-items: center; /* Center vertically */
-      background: white;
-      border: 1px solid transparent; /* No border by default for cleaner look */
-      padding: 6px 10px; 
-      border-radius: var(--radius-sm); 
-      transition: background 0.1s;
-      position: relative;
-    }
-    .item:hover { 
-      background: var(--bg-hover);
-    }
-    .item.merge-selected { 
-      background: #F0F5FF; /* Subtle blue tint */
-      border: 1px solid #B4D5FF;
-    }
-    /* Active State for Translate Button (if needed) */
-    .item.active-detail {
-        background: #F0F9FF; /* Light blue background for currently viewing item */
-        border: 1px solid #BAE6FD;
-    }
-
-    .item.excluded { opacity: 0.5; }
-    .item.excluded .content { text-decoration: line-through; color: var(--text-sub); }
-    
-    .checkbox-wrapper { display: flex; align-items: center; }
-    input[type="checkbox"] { 
-      cursor: pointer; 
-      width: 14px; 
-      height: 14px; 
-      margin: 0; 
-      accent-color: var(--primary-color);
-      border-radius: 2px; /* Sharper checkbox */
-    }
-
-    .content-wrapper { flex: 1; cursor: pointer; min-width: 0; display:flex; flex-direction:column; justify-content:center; }
-    .content { 
-      white-space: pre-wrap; 
-      word-break: break-all; 
-      line-height: 1.4; 
-      color: var(--text-main); 
-      font-size: 12px;
-    }
-    
-    .merged-badge { 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 4px;
-      font-size: 9px; 
-      color: #fff; 
-      background: var(--purple-color); 
-      padding: 1px 5px; 
-      border-radius: 2px; 
-      margin-bottom: 2px;
-      cursor: pointer; 
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      align-self: flex-start;
-    }
-    .merged-badge:hover { background: var(--purple-hover); }
-    
-    .item-actions {
-      display: flex;
-      flex-direction: row; /* Horizontal layout */
-      gap: 4px;
-      opacity: 1; /* Always visible */
-      flex-shrink: 0;
-      align-items: center;
-    }
-
-    .action-btn-small {
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-sm);
-      background: transparent;
-      color: var(--text-sub);
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-    .action-btn-small:hover { background: rgba(0,0,0,0.05); color: var(--text-main); }
-    
-    /* Active/Selected Button States */
-    .item.merge-selected .merge-btn { 
-      color: white;
-      background: var(--purple-color);
-      border-color: var(--purple-color);
-    }
-    
-    /* When detail is open for this item, highlight translate button */
-    .item.active-detail .translate-icon {
-        color: white;
-        background: var(--primary-color);
-        border-color: var(--primary-color);
-    }
-
-    .empty { 
-      height: 100%; 
-      display: flex; 
-      flex-direction: column;
-      align-items: center; 
-      justify-content: center; 
+    /* Icon Button */
+    .icon-btn { 
+      width: 28px; height: 28px; 
+      background: transparent; 
       color: var(--text-sub); 
-      text-align: center;
-      gap: 12px;
-      font-size: 13px;
+      border-radius: var(--radius-md); 
     }
-    .empty-icon { font-size: 24px; opacity: 0.3; margin-bottom: 4px; filter: grayscale(1); }
+    .icon-btn:hover:not(:disabled) { background: rgba(0,0,0,0.06); color: var(--text-main); }
 
-    .footer {
-      padding: 12px 16px; 
-      background: white; 
-      border-top: 1px solid var(--border-color);
-      display: flex; 
-      gap: 8px; 
-      flex-shrink: 0;
-    }
-    .footer button { flex: 1; height: 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
-
-    /* Detail & Batch View */
-    .detail-placeholder { 
-      color: var(--text-sub); 
-      text-align: center; 
-      margin: auto;
-      font-size: 13px; 
-      max-width: 240px;
-      line-height: 1.6;
-    }
-    .detail-placeholder strong { color: var(--text-main); font-weight: 600; }
-
-    .detail-header { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between;
-      margin-bottom: 24px; 
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-    }
-    .detail-header h3 { font-size: 14px; text-transform: none; }
-
-    .section { 
-      margin-bottom: 24px; 
-    }
-    .section-title { 
+    /* Primary Button */
+    .btn-primary { 
+      background: var(--primary-color); 
+      color: white; 
       font-weight: 600; 
-      margin-bottom: 8px; 
-      font-size: 11px; 
+      padding: 8px 16px; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .btn-primary:hover:not(:disabled) { 
+      background: var(--primary-hover); 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+
+    /* Secondary Button */
+    .btn-secondary { 
+      background: white; 
+      color: var(--text-main); 
+      border: 1px solid var(--border-color); 
+      font-weight: 500; 
+      padding: 8px 16px; 
+    }
+    .btn-secondary:hover:not(:disabled) { 
+      background: #fafafa; 
+      border-color: #ccc; 
+    }
+
+    /* Danger Button */
+    .btn-danger {
+      background: white;
+      color: var(--danger-color);
+      border: 1px solid var(--danger-color);
+      padding: 8px 16px;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: #FEF2F2;
+    }
+
+    /* Approve Button */
+    .btn-approve {
+      background: white;
+      color: var(--purple-color);
+      border: 1px solid var(--purple-color);
+      padding: 8px 16px;
+      font-weight: 600;
+    }
+    .btn-approve:hover:not(:disabled) {
+      background: #F5F3FF;
+    }
+    .btn-approve.approved {
+      background: #F3F4F6;
+      color: #9CA3AF;
+      border-color: #E5E7EB;
+      cursor: default;
+    }
+
+    /* Slack Button */
+    .btn-slack { 
+      background: #4A154B; 
+      color: white; 
+      padding: 10px 16px; 
+      width: 100%; 
+      border-radius: var(--radius-md); 
+      font-weight: 600; 
+      font-size: 12px; 
+    }
+    .btn-slack:hover:not(:disabled) { 
+      background: #611f69; 
+    }
+
+    /* Small Button Modifier */
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    /* List */
+    .list { padding: 8px; display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
+    .empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-sub); text-align: center; font-size: 13px; gap: 8px; }
+
+    .item {
+      display: flex; gap: 8px; align-items: center;
+      background: white; padding: 8px 10px; border-radius: var(--radius-sm);
+      border: 1px solid transparent; cursor: pointer;
+      transition: background 0.1s;
+    }
+    .item:hover { background: var(--bg-hover); }
+    .item.active { background: #F0F9FF; border-color: #BAE6FD; }
+    
+    .status-indicator { width: 6px; height: 6px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
+    .status-draft { background: #ccc; }
+    .status-review { background: var(--warning-color); }
+    .status-done { background: var(--success-color); }
+
+    .item-content { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-meta { font-size: 10px; color: var(--text-sub); margin-top: 2px; }
+
+    /* Footer */
+    .footer { padding: 12px; border-top: 1px solid var(--border-color); background: white; }
+
+    /* Detail View */
+    .detail-placeholder { 
+      text-align: center; 
+      margin: auto; 
       color: var(--text-sub); 
+      font-size: 13px;
+      padding: 40px;
+    }
+    .detail-placeholder::before {
+      content: "📄";
+      display: block;
+      font-size: 32px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    
+    .detail-header { 
+      background: linear-gradient(to bottom, #F9FAFB, transparent);
+      border-bottom: 1px solid var(--border-color); 
+      padding-bottom: 20px; 
+      margin: -24px -32px 24px -32px;
+      padding: 20px 32px;
+    }
+    .detail-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .detail-header-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .detail-header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .detail-id {
+      font-size: 11px;
+      color: var(--text-sub);
+      font-family: 'SF Mono', Monaco, monospace;
+      background: #F3F4F6;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    
+    /* Status Badge */
+    .status-badge { 
+      display: inline-block; 
+      padding: 4px 10px; 
+      border-radius: 12px; 
+      font-size: 10px; 
+      font-weight: 600; 
       text-transform: uppercase; 
       letter-spacing: 0.05em;
+    }
+    .badge-draft { background: #F3F4F6; color: #6B7280; }
+    .badge-review { background: #FFF7ED; color: #C2410C; }
+    .badge-done { background: #ECFDF5; color: #047857; }
+
+    /* Sections */
+    .section { margin-bottom: 24px; }
+    .section-label { 
+      font-size: 11px; 
+      font-weight: 600; 
+      color: var(--text-sub); 
+      text-transform: uppercase; 
+      margin-bottom: 10px; 
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Translation Panel - Major sections with card styling */
+    .translation-panel {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .translation-panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 14px 16px;
+      background: #F8FAFC;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .translation-panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .translation-panel-body {
+      padding: 16px;
     }
     
-    .source-text { 
-      font-size: 14px; 
-      line-height: 1.6;
-      color: var(--text-main);
-      padding: 16px; 
+    /* Section Card - for grouped content */
+    .section-card {
+      background: #FAFAFA;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    
+    .text-box { 
+      padding: 14px 16px; 
       background: #FAFAFA; 
       border: 1px solid var(--border-color); 
-      border-radius: var(--radius-sm); 
-      margin-bottom: 24px;
-      white-space: pre-wrap;
-    }
-
-    .match-item { 
-      padding: 8px 12px; 
-      border: 1px solid var(--border-color); 
-      border-radius: var(--radius-sm); 
-      margin-bottom: 6px; 
-      font-size: 12px; 
-      background: white;
-    }
-    .match-key { color: var(--text-sub); font-size: 10px; margin-bottom: 4px; display:flex; align-items:center; letter-spacing: 0.02em;}
-    .match-val { color: var(--text-main); font-weight: 500; }
-    .match-tag { font-size: 9px; padding: 1px 4px; border-radius: 2px; margin-left: auto; font-weight:600; text-transform: uppercase; }
-    .tag-exact { background: #E6FFFA; color: #047481; }
-    .tag-pattern { background: #EBF8FF; color: #2C5282; }
-    .tag-partial { background: #FFFAF0; color: #9C4221; }
-
-    textarea {
-      width: 100%;
-      min-height: 80px;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 12px;
-      resize: vertical;
-      box-sizing: border-box;
-      background: #FAFAFA;
-      color: var(--text-main);
-    }
-    textarea:focus { outline: none; border-color: var(--border-focus); background: white; }
-
-    .translate-btn { width: 100%; background: #333; color: white; padding: 10px; border-radius: var(--radius-sm); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; font-weight: 600;}
-    .translate-btn:hover { background: #000; }
-
-    /* Translation Results */
-    .suggestion { 
-      margin-top: 16px; 
-      padding-top: 16px; 
-      border-top: 1px solid var(--border-color); 
-    }
-    .lang-title { 
-      font-weight: 600; 
-      color: var(--text-main); 
-      margin-bottom: 12px; 
-      font-size: 12px; 
-      display:flex; align-items:center; gap:6px;
-    }
-    .trans-option { 
-      margin-bottom: 8px; 
-      padding: 12px; 
-      background: white; 
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      transition: border-color 0.2s;
-    }
-    .trans-option:hover { border-color: #999; }
-    .trans-text { font-weight: 500; color: var(--text-main); font-size: 13px; margin-bottom: 4px; }
-    .trans-nuance { font-size: 11px; color: var(--text-sub); }
-    
-    .recommendation { 
-      margin-top: 16px; 
-      padding: 12px; 
-      background: #F0FDFA; 
-      border: 1px solid #CCFBF1;
-      border-radius: var(--radius-sm); 
-      color: #0F766E; 
-      font-size: 12px; 
-      line-height: 1.5;
-    }
-
-    .loading { text-align: center; color: var(--text-sub); padding: 30px; font-size: 12px; }
-
-    /* Modal */
-    .modal-overlay { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-      background: rgba(0, 0, 0, 0.4); 
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      z-index: 100; 
-    }
-    .modal { 
-      background: white; 
-      padding: 24px; 
       border-radius: var(--radius-md); 
-      width: 320px; 
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); 
-    }
-    .modal h4 { margin: 0 0 16px 0; font-size: 14px; color: var(--text-main); }
-    .modal input { 
-      width: 100%; padding: 10px; margin-bottom: 8px; 
-      border: 1px solid var(--border-color); 
-      border-radius: var(--radius-sm); 
-      box-sizing: border-box; 
-      font-family: monospace; 
-      font-size: 12px;
-    }
-    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
-    
-    /* Batch List */
-    .batch-list-container {
-      max-height: 200px;
-      overflow-y: auto;
-      background: #FAFAFA;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 0;
-    }
-    .batch-item-row {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border-color);
-      font-size: 12px;
+      font-size: 14px; 
+      line-height: 1.6; 
+      white-space: pre-wrap;
       color: var(--text-main);
+    }
+
+    /* Option Cards (AI Drafts) */
+    .option-card {
+      padding: 14px; 
+      border: 1px solid var(--border-color); 
+      border-radius: var(--radius-md);
+      margin-bottom: 8px; 
+      cursor: pointer; 
+      transition: all 0.15s ease; 
       background: white;
     }
-    .batch-item-row:last-child { border-bottom: none; }
-    .batch-item-row:nth-child(even) { background: #FAFAFA; }
+    .option-card:hover { 
+      border-color: #bbb; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .option-card.selected { 
+      border-color: var(--primary-color); 
+      background: #F0F9FF; 
+      box-shadow: 0 0 0 3px rgba(24, 160, 251, 0.1);
+    }
+    .option-card-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .option-card-nuance {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    
+    /* Language Columns */
+    .lang-row { display: flex; gap: 20px; }
+    .lang-col { flex: 1; }
+    .lang-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Actions Footer */
+    .detail-actions {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Inputs */
+    textarea.edit-field {
+      width: 100%; 
+      min-height: 40px; 
+      max-height: 200px;
+      padding: 10px 12px; 
+      box-sizing: border-box;
+      border: 1px solid var(--border-color); 
+      border-radius: var(--radius-md);
+      font-family: inherit; 
+      font-size: 13px;
+      line-height: 1.5;
+      resize: none;
+      overflow-y: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    textarea.edit-field:focus { 
+      outline: none; 
+      border-color: var(--primary-color); 
+      box-shadow: 0 0 0 3px rgba(24, 160, 251, 0.1);
+    }
+    textarea.edit-field::placeholder {
+      color: #bbb;
+    }
+
+    /* Task Groups */
+    .task-group {
+      margin-bottom: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: white;
+    }
+    .task-header {
+      padding: 6px 10px;
+      background: #F3F4F6;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      font-size: 10px;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .task-items {
+      padding: 2px;
+    }
+
+    /* Apply Button */
+    .btn-apply {
+      width: 100%;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: white;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-apply:hover {
+      background: #F5F5F5;
+      border-color: #bbb;
+    }
+    .btn-apply.active {
+      background: var(--success-color);
+      color: white;
+      border-color: var(--success-color);
+    }
+    .btn-apply.active:hover {
+      background: #17a06d;
+    }
 
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- LEFT PANEL -->
+    <!-- LEFT PANEL: LIST -->
     <div class="panel-left">
-      <!-- EXTRACT VIEW -->
-      <div id="extractView" style="display:flex; flex-direction:column; height:100%;">
-        <div class="header">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <h3>추출된 텍스트</h3>
-            <span id="count" class="badge">0</span>
-            <button id="btnAdd" class="icon-btn" title="선택된 텍스트 추가 (Cmd+Enter)" style="color:var(--primary-color);">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 1 .5.5v3.5h3.5a.5.5 0 0 1 0 1H8.5v3.5a.5.5 0 0 1-1 0V8.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/></svg>
-            </button>
-          </div>
-          <div style="display:flex; align-items:center; gap:2px;">
-            <button id="btnSettings" class="icon-btn" title="설정 (API Key)">
-               <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zM8.354 2.65a.544.544 0 0 0-.708 0l-.145.492a1.873 1.873 0 0 0-2.694 1.116l-.491.144c-.282.083-.4.407-.229.63l.348.455c.48.629.48 1.503 0 2.132l-.348.454a.397.397 0 0 0 .23.631l.49.144a1.873 1.873 0 0 0 2.695 1.116l.145.492c.082.28.407.4.63.229l.454-.349a1.734 1.734 0 0 0 2.132 0l.455.349c.222.17.547.051.629-.23l.145-.491a1.873 1.873 0 0 0 2.694-1.116l.491-.145c.282-.082.4-.407.23-.63l-.349-.454a1.735 1.735 0 0 0 0-2.133l.349-.454c.17-.223.051-.548-.23-.63l-.49-.145a1.873 1.873 0 0 0-2.695-1.116l-.145-.491c-.082-.281-.407-.4-.629-.23l-.455.349a1.734 1.734 0 0 0-2.132 0l-.454-.349c-.223-.17-.548-.051-.63.23z"/></svg>
-            </button>
-            <button id="btnClear" class="icon-btn" title="목록 초기화">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
-            </button>
-          </div>
-        </div>
-        
-        <div id="list" class="list">
-          <div class="empty">
-            <div class="empty-icon">📂</div>
-            <div>추출할 텍스트 레이어를<br>선택 후 추가하세요.</div>
+      <div class="header">
+        <div class="header-top">
+          <h3>Translations</h3>
+          <div style="display:flex; gap:4px;">
+            <button id="btnAdd" class="icon-btn" title="Add Selected Text">+</button>
+            <button id="btnClear" class="icon-btn" title="Clear All">🗑</button>
+            <button id="btnSettings" class="icon-btn" title="Settings">⚙️</button>
           </div>
         </div>
 
-        <div class="footer">
-          <button id="btnCopy" class="btn-secondary" disabled>복사</button>
-          <button id="btnBatch" class="btn-secondary" style="background:#FFF1F2; color:#BE123C; border-color:#FECDD3;" disabled>일괄 번역</button>
-          <button id="btnMergeAction" class="btn-purple" disabled>합치기</button>
+        <!-- File Status Indicator -->
+        <div id="fileStatus" style="padding: 6px 12px; margin: 8px 0; background: #FEF3C7; border-radius: 4px; font-size: 10px; display: none;">
+          <span style="color: #92400E;">⚠️ File not saved to Figma Cloud. Slack links will not work.</span>
         </div>
+
+        <!-- File Key Display -->
+        <!-- <div id="fileKeyDisplay" style="padding: 6px 12px; margin: 8px 0; background: #ECFDF5; border-radius: 4px; font-size: 10px; display: none;">
+          <div style="color: #047857; font-weight: 600; margin-bottom: 2px;">File Info:</div>
+          <div style="color: #065F46; font-family: monospace;">Key: <span id="fileKeyText"></span></div>
+          <div style="color: #065F46;">Name: <span id="fileNameText"></span></div>
+        </div> -->
+
+        <div class="tabs">
+          <div class="tab active" data-tab="all">All <span id="badge-all" class="tab-badge">0</span></div>
+          <div class="tab" data-tab="draft">Draft <span id="badge-draft" class="tab-badge">0</span></div>
+          <div class="tab" data-tab="review">Review <span id="badge-review" class="tab-badge">0</span></div>
+          <div class="tab" data-tab="done">Done <span id="badge-done" class="tab-badge">0</span></div>
+        </div>
+      </div>
+
+      <div id="list" class="list">
+        <!-- Items go here -->
+      </div>
+
+      <div class="footer">
+        <!-- Contextual Actions based on Tab -->
+        <button id="btnFooterAction" class="btn-slack" disabled>Send 0 items to Review</button>
       </div>
     </div>
 
-    <!-- RIGHT PANEL -->
+    <!-- RIGHT PANEL: DETAIL -->
     <div id="detailView" class="panel-right">
       <div id="detailPlaceholder" class="detail-placeholder">
-        목록에서 항목을 선택하여 상세 정보를 확인하거나<br>
-        <strong>일괄 번역</strong> 기능을 사용하세요.
+        Select an item to view details<br>or perform actions.
       </div>
-
-      <!-- Single Detail View -->
+      
       <div id="detailContent" style="display:none;">
+        <!-- Header -->
         <div class="detail-header">
-          <h3>기존 리소스 확인</h3>
-        </div>
-        
-        <div class="source-text" id="detailSourceText"></div>
-
-        <div class="section">
-          <div class="section-title">기존 리소스 검색 결과</div>
-          <div id="resourceMatches">
-            <div class="loading">검색 중...</div>
+          <div class="detail-header-top">
+             <div class="detail-header-info">
+               <span id="detailStatusBadge" class="status-badge badge-draft">Draft</span>
+               <span class="detail-id">ID: <span id="detailId"></span></span>
+             </div>
+             <div class="detail-header-actions">
+               <button id="btnFocus" class="btn-secondary btn-sm">Focus</button>
+               <button id="btnDeleteItem" class="btn-danger btn-sm">Remove</button>
+             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Batch View -->
-      <div id="batchView" style="display:none;">
-        <div class="detail-header">
-          <h3>일괄 AI 번역</h3>
-        </div>
-
+        <!-- 1. Source Text -->
         <div class="section">
-           <div class="section-title">선택된 항목 (<span id="batchCount">0</span>개)</div>
-           <div id="batchList" class="batch-list-container"></div>
+          <div class="section-label">Source Text (English)</div>
+          <div id="detailSource" class="text-box"></div>
         </div>
 
-        <div class="section">
-          <div class="section-title">Context (공통 적용)</div>
-          <textarea id="batchContextInput" placeholder="모든 항목에 적용할 문맥을 입력하세요"></textarea>
+        <!-- 2. Glossary Matches -->
+        <div class="section" id="glossarySection">
+          <div class="section-label">Glossary Matches</div>
+          <div id="glossaryMatches" class="section-card" style="font-size:12px;">Checking...</div>
         </div>
 
-        <div class="section">
-          <div class="section-title">
-            실행
-            <button id="btnSetKeyBatch" class="btn-text">API Key 설정</button>
-          </div>
-          
-          <div id="batchResult"></div>
-          <div style="margin-top: 12px;">
-            <button id="btnBatchRun" class="translate-btn">일괄 번역 실행</button>
-          </div>
+        <!-- 3. AI Drafts -->
+        <div id="draftSection" class="translation-panel">
+           <div class="translation-panel-header">
+             <span class="translation-panel-title">AI Drafts</span>
+             <button id="btnRegen" class="btn-secondary btn-sm">Generate</button>
+           </div>
+           <div class="translation-panel-body">
+             <div class="lang-row">
+               <div class="lang-col">
+                 <div class="lang-label">🇫🇷 French</div>
+                 <div id="draftsFr"></div>
+               </div>
+               <div class="lang-col">
+                 <div class="lang-label">🇩🇪 German</div>
+                 <div id="draftsDe"></div>
+               </div>
+             </div>
+           </div>
         </div>
+
+        <!-- 4. Final Translation -->
+        <div id="reviewSection" class="translation-panel" style="display:none;">
+           <div class="translation-panel-header">
+             <span class="translation-panel-title">Final Translation</span>
+           </div>
+           <div class="translation-panel-body">
+             <div class="lang-row">
+               <div class="lang-col">
+                 <div class="lang-label">🇫🇷 French</div>
+                 <textarea id="editFr" class="edit-field" placeholder="Enter French translation..."></textarea>
+                 <button id="btnApplyFr" class="btn-apply" data-lang="fr">Apply to Canvas</button>
+               </div>
+               <div class="lang-col">
+                 <div class="lang-label">🇩🇪 German</div>
+                 <textarea id="editDe" class="edit-field" placeholder="Enter German translation..."></textarea>
+                 <button id="btnApplyDe" class="btn-apply" data-lang="de">Apply to Canvas</button>
+               </div>
+             </div>
+           </div>
+        </div>
+
+        <!-- 5. Approve Actions -->
+        <div class="detail-actions">
+           <button id="btnApproveFr" class="btn-approve" style="display:none;">🇫🇷 Approve French</button>
+           <button id="btnApproveDe" class="btn-approve" style="display:none;">🇩🇪 Approve German</button>
+        </div>
+
       </div>
     </div>
   </div>
+  
+  <!-- Hidden Settings Modal for API Key -->
+  <div id="settingsModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:20px; border-radius:4px; width:400px;">
+       <h4 style="margin-top:0;">Settings</h4>
 
-  <!-- API Key Modal -->
-  <div id="settingsModal" class="modal-overlay">
-    <div class="modal">
-      <h4>OpenAI API Key 설정</h4>
-      <input type="password" id="modalApiKeyInput" placeholder="sk-...">
-      <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5;">
-        키는 브라우저 로컬 스토리지에만 저장됩니다.
-      </div>
-      <div class="modal-footer">
-        <button id="btnCancelKey" class="btn-secondary">취소</button>
-        <button id="btnSaveKey" class="btn-primary">저장</button>
-      </div>
+       <label style="font-size:11px; font-weight:600; display:block; margin-bottom:4px;">OpenAI API Key</label>
+       <input type="password" id="apiKeyInput" style="width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; border:1px solid #ddd; border-radius:3px;">
+
+       <label style="font-size:11px; font-weight:600; display:block; margin-bottom:4px;">Slack Webhook URL</label>
+       <input type="text" id="slackUrlInput" placeholder="https://hooks.slack.com/services/..." style="width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; border:1px solid #ddd; border-radius:3px;">
+
+       <label style="font-size:11px; font-weight:600; display:block; margin-bottom:4px;">Figma File Key (Optional - for local dev)</label>
+       <input type="text" id="fileKeyInput" placeholder="gx35mT7juVjHGfzW07EQ0w" style="width:100%; padding:8px; margin-bottom:4px; box-sizing:border-box; border:1px solid #ddd; border-radius:3px; font-family: monospace; font-size: 11px;">
+       <div style="font-size:10px; color:#666; margin-bottom:12px;">Get from browser URL: figma.com/design/<strong>THIS_PART</strong>/filename</div>
+
+       <div style="text-align:right; margin-top:8px;">
+         <button id="btnSaveKey" class="btn-primary">Save</button>
+         <button id="btnCloseKey" class="btn-secondary">Close</button>
+       </div>
     </div>
   </div>
 
   <script>
-    let currentData = [];
-    let currentDetailItem = null;
-    let currentDetailMatches = [];
-    let batchResults = null; // 번역 결과 저장용
-    let batchContext = '';
+    // --- Constants ---
+    const STATUS = {
+      DRAFT: 'Draft',
+      IN_PROGRESS: 'Review',
+      DONE: 'Done'
+    };
 
-    // TODO: 코드에 API Key를 직접 넣으려면 아래 빈 문자열 대신 키를 입력하세요.
+    const REVIEW_STATUS = {
+      PENDING: 'PENDING',
+      REQUESTED: 'REQUESTED',
+      APPROVED: 'APPROVED'
+    };
+
+    const TABS = {
+      ALL: 'all',
+      DRAFT: 'draft',
+      REVIEW: 'review',
+      DONE: 'done'
+    };
+
+    const LANGUAGES = {
+      FR: 'fr',
+      DE: 'de'
+    };
+
+    const OPENAI_CONFIG = {
+      MODEL: 'gpt-4o',
+      API_URL: 'https://api.openai.com/v1/chat/completions'
+    };
+
+    const FIGMA_URLS = {
+      WEB: 'https://www.figma.com/design',
+      DESKTOP: 'figma://file'
+    };
+
+    // --- State ---
+    let items = []; // { id, text, status, reviews: {fr, de}, drafts: {fr:[], de:[]}, final: {fr, de} }
+    let activeTab = TABS.ALL;
+    let selectedItemId = null;
     let apiKey = '';
+    let slackWebhookUrl = '';
+    let figmaFileKey = '';
+    let figmaFileName = '';
+    let figmaUser = null;
+    let manualFileKey = ''; // Manual override for local dev
 
-    try {
-      // 로컬 스토리지 대신 플러그인 백엔드에서 키를 로드합니다.
-      // (비동기 메시지로 load-api-key 수신 대기)
-    } catch(e) {}
+    // Helper function to update file key display
+    function updateFileKeyDisplay() {
+      const effectiveFileKey = manualFileKey || figmaFileKey;
 
+      const fileStatusEl = document.getElementById('fileStatus');
+      const fileKeyDisplayEl = document.getElementById('fileKeyDisplay');
+      const fileKeyTextEl = document.getElementById('fileKeyText');
+      const fileNameTextEl = document.getElementById('fileNameText');
+
+      if (!effectiveFileKey || effectiveFileKey === '') {
+        fileStatusEl.style.display = 'block';
+        // fileKeyDisplayEl.style.display = 'none'; // Element commented out in HTML
+      } else {
+        fileStatusEl.style.display = 'none';
+        // fileKeyDisplayEl.style.display = 'block';
+        // fileKeyTextEl.textContent = effectiveFileKey + (manualFileKey ? ' (manual)' : '');
+        // fileNameTextEl.textContent = figmaFileName;
+      }
+    }
+
+    // --- Init ---
+    // 1. 먼저 메시지 핸들러를 설정 (응답을 받을 준비)
     window.onmessage = (event) => {
       const msg = event.data.pluginMessage;
-      
-      if (msg.type === 'load-api-key') {
-         if (msg.apiKey) {
-           apiKey = msg.apiKey;
-           console.log('API Key loaded from clientStorage');
-         }
-      }
+      if (!msg) return;
 
-      if (msg.type === 'selection-update') {
-        // Auto feature removed. Ignoring selection updates.
-        return;
+      // Local Settings 로드 (User-level)
+      if (msg.type === 'load-api-key') {
+        apiKey = msg.apiKey || '';
+        console.log('UI: load-api-key received, length:', apiKey.length);
+      }
+      if (msg.type === 'load-slack-url') {
+        slackWebhookUrl = msg.url || '';
+        console.log('UI: load-slack-url received, length:', slackWebhookUrl.length);
+      }
+      if (msg.type === 'load-manual-file-key') {
+        manualFileKey = msg.key || '';
+        console.log('UI: load-manual-file-key received:', manualFileKey);
+        updateFileKeyDisplay();
+      }
+      if (msg.type === 'load-file-key') {
+        figmaFileKey = msg.key || '';
+        figmaFileName = msg.name || 'Untitled';
+        figmaUser = msg.user;
+        console.log('UI: load-file-key received, fileKey:', figmaFileKey, 'fileName:', figmaFileName, 'user:', figmaUser);
+        updateFileKeyDisplay();
+      }
+      
+      // Document State 로드 (Shared Data)
+      if (msg.type === 'restore-state') {
+        console.log('UI: restore-state received, items:', Array.isArray(msg.data) ? msg.data.length : 'not array');
+        items = Array.isArray(msg.data) ? msg.data : [];
+        renderList();
+        updateBadges();
+        console.log('UI: State restored, items in memory:', items.length);
       }
 
       if (msg.type === 'add-items') {
-        const newData = msg.data;
-        const existingMap = new Map(currentData.map(d => [d.ids.join(','), d]));
-        let added = false;
-        
-        newData.forEach(d => {
-           const key = d.ids.join(',');
-           if (!existingMap.has(key)) {
-             currentData.push({ ...d, checked: true, mergeSelected: false, originalItems: null });
-             added = true;
-           }
-        });
-        
-        if (added) {
-          render();
-          saveState();
-        }
-      }
+        console.log('Received add-items:', msg.data);
+        // Add new items as DRAFT
+        const newItems = msg.data.map(d => ({
+          id: d.ids[0],
+          ids: d.ids,
+          text: d.text,
+          status: STATUS.DRAFT, // Overall status
+          reviews: { fr: REVIEW_STATUS.PENDING, de: REVIEW_STATUS.PENDING }, // Split review status
+          drafts: null,
+          final: { fr: '', de: '' }
+        }));
 
-      if (msg.type === 'restore-state') {
-        if (msg.data && Array.isArray(msg.data)) {
-           const existingMap = new Map(currentData.map(d => [d.ids.join(','), d]));
-           msg.data.forEach(item => {
-             const key = item.ids.join(',');
-             if (!existingMap.has(key)) {
-               currentData.push(item);
-             }
-           });
-           render();
-        }
+        // Merge avoid duplicates
+        const existingIds = new Set(items.map(i => i.id));
+        newItems.forEach(ni => {
+          if (!existingIds.has(ni.id)) {
+            items.push(ni);
+            console.log('Added item:', ni.text);
+          } else {
+            console.log('Duplicate item skipped:', ni.text);
+          }
+        });
+
+        console.log('Total items now:', items.length);
+        saveState();
+        renderList();
+        updateBadges();
       }
 
       if (msg.type === 'translation-check-result') {
-        currentDetailMatches = msg.data || [];
-        renderResourceMatches(msg.data, msg.originalText);
+        renderGlossaryMatches(msg.data);
       }
 
-      if (msg.type === 'batch-translation-check-result') {
-        runBatchOpenAI(msg.data);
-      }
-
-      if (msg.type === 'restore-batch-results') {
-        batchResults = msg.data;
-        // 만약 현재 배치 뷰가 활성화되어 있다면 바로 렌더링
-        if (document.getElementById('batchView').style.display === 'block') {
-           renderBatchResults(batchResults);
-        }
-      }
-
-      if (msg.type === 'restore-batch-context') {
-        batchContext = msg.data || '';
-        document.getElementById('batchContextInput').value = batchContext;
-      }
-    };
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-        parent.postMessage({ pluginMessage: { type: 'add-selection' } }, '*');
-      }
-    });
-
-    function render() {
-      const list = document.getElementById('list');
-      list.innerHTML = '';
-      
-      const checkedCount = currentData.filter(d => d.checked).length;
-      document.getElementById('count').innerText = `${checkedCount}`;
-      
-      const btns = document.querySelectorAll('#listView button:not(.action-btn):not(#btnClear)');
-      if (currentData.length === 0) {
-        list.innerHTML = `<div class="empty"><div class="empty-icon">📂</div><div>추출할 텍스트 레이어를<br>선택 후 추가하세요.</div></div>`;
-        return;
-      }
-      
-      document.getElementById('btnCopy').disabled = checkedCount === 0;
-      document.getElementById('btnBatch').disabled = checkedCount === 0;
-
-      const mergeCount = currentData.filter(d => d.mergeSelected).length;
-      const mergeBtn = document.getElementById('btnMergeAction');
-      mergeBtn.disabled = mergeCount < 2;
-      mergeBtn.innerText = mergeCount > 0 ? `합치기 (${mergeCount})` : "합치기";
-
-      currentData.forEach((item, index) => {
-        const div = document.createElement('div');
-        // Check if this item is the one currently being viewed in detail
-        const isDetailActive = currentDetailItem && currentDetailItem.ids.join(',') === item.ids.join(',');
-        
-        div.className = `item ${item.checked ? '' : 'excluded'} ${item.mergeSelected ? 'merge-selected' : ''} ${isDetailActive ? 'active-detail' : ''}`;
-        
-        const isMerged = !!item.originalItems;
-        
-        div.innerHTML = `
-          <div class="checkbox-wrapper" title="목록에서 제외">
-            <input type="checkbox" ${item.checked ? 'checked' : ''}>
-          </div>
-          <div class="content-wrapper">
-            ${isMerged ? '<span class="merged-badge" title="병합 해제하려면 클릭">MERGED</span>' : ''}
-            <div class="content">${escapeHtml(item.text)}</div>
-          </div>
-          <div class="item-actions">
-             <div class="action-btn-small translate-icon" title="번역 및 확인">
-               <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M12.5 14h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5zM3 4v9h9V4H3z"/><path d="M5.5 6.5A.5.5 0 0 1 6 6h4a.5.5 0 0 1 0 1H8.5v4a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1-.5-.5z"/></svg>
-             </div>
-             <div class="action-btn-small merge-btn" title="병합 대상으로 선택">
-               ${item.mergeSelected ? '✓' : '+'}
-             </div>
-          </div>
-        `;
-        
-        div.querySelector('input').onchange = (e) => {
-          const isChecked = e.target.checked;
-          
-          if (!isChecked) {
-            const idx = currentData.indexOf(item);
-            if (idx > -1) {
-              currentData.splice(idx, 1);
-            }
-            parent.postMessage({ pluginMessage: { type: 'clear-highlights', ids: item.ids } }, '*');
-          } else {
-            item.checked = true;
+      if (msg.type === 'save-batch-results') {
+          // ... (existing code) ...
+          if (selectedItemId && msg.data) {
+             // ...
           }
-          
-          render();
-          saveState();
-        };
-        
-        div.querySelector('.content-wrapper').onclick = (e) => {
-          if (e.target.closest('.merged-badge')) return;
-          focusNodes(item.ids);
-        };
+      }
 
-        const badge = div.querySelector('.merged-badge');
-        if (badge) {
-          badge.onclick = (e) => {
-            e.stopPropagation();
-            unmergeItem(index);
-          };
-        }
-        
-        const transIcon = div.querySelector('.translate-icon');
-        if (transIcon) {
-          transIcon.onclick = (e) => {
-            e.stopPropagation();
-            openDetail(item);
-          };
-        }
-
-        div.querySelector('.merge-btn').onclick = (e) => {
-          e.stopPropagation();
-          item.mergeSelected = !item.mergeSelected;
-          render();
-          saveState();
-        };
-
-        list.appendChild(div);
-      });
-    }
-    // --- Persistence ---
-    function saveState() {
-      parent.postMessage({ pluginMessage: { type: 'save-state', data: currentData } }, '*');
-    }
-
-    document.getElementById('btnClear').onclick = () => {
-      if (confirm('전체 목록을 초기화하시겠습니까?')) {
-        currentData = [];
-        batchResults = null; 
-        batchContext = ''; 
-        document.getElementById('batchContextInput').value = '';
-        currentDetailItem = null; // Clear detail view ref
-        
-        parent.postMessage({ pluginMessage: { type: 'save-batch-results', data: null } }, '*');
-        parent.postMessage({ pluginMessage: { type: 'save-batch-context', data: '' } }, '*');
-        parent.postMessage({ pluginMessage: { type: 'save-state', data: [] } }, '*');
-        parent.postMessage({ pluginMessage: { type: 'clear-highlights' } }, '*');
-        
-        render();
-        // Hide detail view
-        document.getElementById('detailContent').style.display = 'none';
-        document.getElementById('batchView').style.display = 'none';
-        document.getElementById('detailPlaceholder').style.display = 'block';
+      if (msg.type === 'selection-changed') {
+          // If the selected item exists in our list, highlight it
+          const id = msg.id;
+          if (id) {
+              const item = items.find(i => i.ids.includes(id));
+              if (item) {
+                  // If item is found, switch tab if necessary and open detail
+                  // Force switch tab if item is not visible in current tab?
+                  // Maybe just open detail if it's relevant
+                  if (activeTab !== 'all' && item.status.toLowerCase() !== activeTab && item.reviews?.fr !== activeTab && item.reviews?.de !== activeTab) {
+                      // Optionally switch tab or just show notification
+                  }
+                  
+                  selectedItemId = item.id;
+                  renderList();
+                  renderDetail(item);
+                  // Scroll to item in list
+                  setTimeout(() => {
+                      const el = document.querySelector('.item.active');
+                      if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                  }, 100);
+              }
+          }
       }
     };
 
-    document.getElementById('btnAdd').onclick = () => {
-       parent.postMessage({ pluginMessage: { type: 'add-selection' } }, '*');
-    };
+    // ========================================
+    // UI EVENT HANDLERS
+    // ========================================
 
-
-    function openDetail(item) {
-      currentDetailItem = item;
-      currentDetailMatches = [];
-      
-      // Re-render list to show active state
-      render();
-
-      document.getElementById('detailPlaceholder').style.display = 'none';
-      document.getElementById('batchView').style.display = 'none';
-      document.getElementById('detailContent').style.display = 'block';
-      
-      document.getElementById('detailSourceText').innerText = item.text;
-      document.getElementById('resourceMatches').innerHTML = '<div class="loading">검색 중...</div>';
-      // document.getElementById('translationResult').innerHTML = '';
-      
-      parent.postMessage({ pluginMessage: { type: 'check-translation', text: item.text } }, '*');
-    }
-
-    function renderResourceMatches(matches, originalText) {
-      const container = document.getElementById('resourceMatches');
-      if (!matches || matches.length === 0) {
-        container.innerHTML = '<div class="match-item" style="color:var(--text-sub); text-align:center; border:none; background:none;">일치하는 리소스가 없습니다.</div>';
-        return;
-      }
-      
-      container.innerHTML = matches.map(m => {
-        let tagClass = 'tag-partial';
-        if (m.type === 'EXACT') tagClass = 'tag-exact';
-        if (m.type === 'PATTERN_MATCH') tagClass = 'tag-pattern';
-        
-        return `
-        <div class="match-item">
-          <div class="match-key">${m.key} <span class="match-tag ${tagClass}">${m.type}</span></div>
-          <div class="match-val" style="color: #0369A1; font-weight: 600; margin-bottom: 2px; display:inline-block;">🇺🇸 ${escapeHtml(m.value)}</div>
-          ${m.deValue ? `<div class="match-val" style="margin-top:2px; color:var(--text-sub); font-size:11px;">🇩🇪 ${escapeHtml(m.deValue)}</div>` : ''}
-          ${m.frValue ? `<div class="match-val" style="margin-top:2px; color:var(--text-sub); font-size:11px;">🇫🇷 ${escapeHtml(m.frValue)}</div>` : ''}
-        </div>
-      `}).join('');
-    }
-
-    // --- Batch View Logic ---
-    
-    document.getElementById('batchContextInput').addEventListener('input', (e) => {
-      const val = e.target.value;
-      batchContext = val;
-      parent.postMessage({ pluginMessage: { type: 'save-batch-context', data: val } }, '*');
+    /**
+     * Tab switching handler
+     * Updates active tab and filters the item list
+     */
+    document.querySelectorAll('.tab').forEach(el => {
+      el.onclick = () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        activeTab = el.dataset.tab;
+        renderList();
+        updateFooter();
+      };
     });
 
-    document.getElementById('btnBatch').onclick = () => {
-       const selectedItems = currentData.filter(d => d.checked);
-       if (selectedItems.length === 0) return;
+    /**
+     * Render the item list based on current tab filter
+     */
+    function renderList() {
+      const listEl = document.getElementById('list');
+      listEl.innerHTML = '';
+      
+      const filtered = items.filter(i => {
+        if (activeTab === 'all') return true;
+        if (activeTab === 'draft') return i.status === STATUS.DRAFT;
+        if (activeTab === 'review') return (i.status === STATUS.IN_PROGRESS || i.reviews?.fr === REVIEW_STATUS.REQUESTED || i.reviews?.de === REVIEW_STATUS.REQUESTED || i.reviews?.fr === REVIEW_STATUS.APPROVED || i.reviews?.de === REVIEW_STATUS.APPROVED) && i.status !== STATUS.DONE;
+        if (activeTab === 'done') return i.status === STATUS.DONE;
+        return false;
+      });
 
-       document.getElementById('detailPlaceholder').style.display = 'none';
-       document.getElementById('detailContent').style.display = 'none';
-       document.getElementById('batchView').style.display = 'block';
-
-       document.getElementById('batchCount').innerText = selectedItems.length;
-       
-       const listEl = document.getElementById('batchList');
-       listEl.innerHTML = selectedItems.map(item => `
-         <div class="batch-item-row">
-           ${escapeHtml(item.text)}
-         </div>
-       `).join('');
-       
-       document.getElementById('batchResult').innerHTML = '';
-
-       if (batchResults) {
-         renderBatchResults(batchResults);
-       }
-    };
-
-    document.getElementById('btnSetKeyBatch').onclick = openSettingsModal;
-
-    document.getElementById('btnBatchRun').onclick = () => {
-        const selectedItems = currentData.filter(d => d.checked);
-        if (selectedItems.length === 0) return;
-        
-        if (!apiKey) {
-            alert('OpenAI API Key를 먼저 설정해주세요.');
-            return;
-        }
-
-        const btn = document.getElementById('btnBatchRun');
-        btn.disabled = true;
-        btn.innerText = '처리 중...';
-        document.getElementById('batchResult').innerHTML = '<div class="loading">리소스 검색 중...</div>';
-
-        parent.postMessage({ pluginMessage: { type: 'check-batch-translation', items: selectedItems } }, '*');
-    };
-
-    async function runBatchOpenAI(itemsWithMatches) {
-        const btn = document.getElementById('btnBatchRun');
-        const resultArea = document.getElementById('batchResult');
-        const context = document.getElementById('batchContextInput').value.trim();
-
-        try {
-            resultArea.innerHTML = '<div class="loading">번역 요청 중...</div>';
-
-            const itemsPrompt = itemsWithMatches.map((item, idx) => {
-                let refText = "";
-                if (item.matches && item.matches.length > 0) {
-                     refText = "   Matches: " + item.matches.map(m => {
-                         const parts = [`"${m.value}"`];
-                         if (m.deValue) parts.push(`DE: "${m.deValue}"`);
-                         if (m.frValue) parts.push(`FR: "${m.frValue}"`);
-                         return `[${parts.join(', ')}]`;
-                     }).join(", ");
-                }
-                return `Item ${idx + 1}: "${item.text}"${refText ? '\n' + refText : ''}`;
-            }).join('\n\n');
-
-            const prompt = `
-              Translate the following list of UI texts into French (fr) and German (de).
-              Context: Mobile app/webtoon platform (Tappytoon).
-              ${context ? `User Context: ${context}` : ''}
-              
-              Requirements:
-              1. Provide 3 options for each language.
-              2. Explain the nuance for each option briefly in Korean.
-              3. Recommend the best option in Korean.
-
-              Each item may have "Matches" listed below it. These are existing similar translations in our database. Use them as a reference for consistency.
-
-              List of items to translate:
-              ${itemsPrompt}
-              
-              Output JSON format:
-              {
-                "results": [
-                  {
-                    "original": "Original Text",
-                    "fr": [ { "text": "...", "nuance": "..." }, ... ],
-                    "de": [ { "text": "...", "nuance": "..." }, ... ],
-                    "recommendation": "Brief reason"
-                  },
-                  ...
-                ]
-              }
-              Ensure the order matches the input list.
-            `;
-
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-              },
-              body: JSON.stringify({
-                model: "gpt-4o-mini",
-                messages: [{ role: "user", content: prompt }],
-                response_format: { type: "json_object" }
-              })
-            });
-
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-
-            const content = JSON.parse(data.choices[0].message.content);
-            
-            batchResults = content.results;
-            parent.postMessage({ pluginMessage: { type: 'save-batch-results', data: batchResults } }, '*');
-            
-            renderBatchResults(content.results);
-
-        } catch (err) {
-            resultArea.innerHTML = `<div style="color:red; padding:10px;">Error: ${err.message}</div>`;
-        } finally {
-            btn.disabled = false;
-            btn.innerText = '일괄 번역 실행';
-        }
-    }
-
-    function renderBatchResults(results) {
-        const container = document.getElementById('batchResult');
-        if (!results || !Array.isArray(results)) {
-            container.innerHTML = '<div style="padding:10px;">결과 형식이 올바르지 않습니다.</div>';
-            return;
-        }
-
-        let html = '';
-        results.forEach((res, idx) => {
-             html += `<div class="section" style="border-left: 3px solid var(--primary-color);">
-               <div style="font-weight:600; margin-bottom:8px; font-size:13px;">${idx+1}. ${escapeHtml(res.original)}</div>`;
-             
-             ['fr', 'de'].forEach(lang => {
-                const langName = lang === 'fr' ? '🇫🇷 French' : '🇩🇪 German';
-                const options = res[lang];
-                html += `<div style="margin-top:8px;"><div style="font-size:12px; font-weight:600; color:var(--text-sub); margin-bottom:4px;">${langName}</div>`;
-                if (Array.isArray(options)) {
-                   options.forEach(opt => {
-                       html += `<div class="trans-option" style="margin-bottom:4px;"><div class="trans-text" style="font-size:12px;">${escapeHtml(opt.text)}</div><div class="trans-nuance" style="font-size:11px;">${escapeHtml(opt.nuance)}</div></div>`;
-                   });
-                }
-                html += `</div>`;
-             });
-             
-             if (res.recommendation) {
-                 html += `<div class="recommendation" style="font-size:11px; margin-top:8px;">💡 AI 추천 의견: ${escapeHtml(res.recommendation)}</div>`;
-             }
-             html += `</div>`;
-        });
-        
-        container.innerHTML = html;
-    }
-
-    // --- OpenAI Translation Logic ---
-
-    function openSettingsModal() {
-      document.getElementById('modalApiKeyInput').value = apiKey;
-      document.getElementById('settingsModal').style.display = 'flex';
-      document.getElementById('modalApiKeyInput').focus();
-    }
-
-    function closeSettingsModal() {
-      document.getElementById('settingsModal').style.display = 'none';
-    }
-
-    document.getElementById('btnSettings').onclick = openSettingsModal;
-
-    document.getElementById('btnCancelKey').onclick = closeSettingsModal;
-    
-    document.getElementById('btnSaveKey').onclick = () => {
-      const input = document.getElementById('modalApiKeyInput');
-      const newKey = input.value.trim();
-      if (!newKey) {
-        alert('API Key를 입력해주세요.');
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<div class="empty">No items found</div>';
         return;
       }
-      
-      try {
-        apiKey = newKey;
-        // localStorage.setItem('openai_api_key', apiKey); // Not allowed in Figma
-        parent.postMessage({ pluginMessage: { type: 'save-api-key', apiKey: apiKey } }, '*');
-        closeSettingsModal();
-      } catch (e) {
-        alert('API Key 저장 중 오류가 발생했습니다: ' + e.message);
-      }
-    };
 
-    const btnTranslate = document.getElementById('btnTranslate');
-    if (btnTranslate) {
-      btnTranslate.onclick = async () => {
-        if (!apiKey) {
-          openSettingsModal();
+      // Group by taskId
+      const groups = {};
+      const noTaskItems = [];
+
+      filtered.forEach(item => {
+        if (item.taskId) {
+          if (!groups[item.taskId]) groups[item.taskId] = [];
+          groups[item.taskId].push(item);
+        } else {
+          noTaskItems.push(item);
+        }
+      });
+
+      // Helper to render a single item
+      const renderItem = (item) => {
+          const div = document.createElement('div');
+          div.className = `item ${selectedItemId === item.id ? 'active' : ''}`;
+          
+          let statusColor = 'status-draft';
+          if (item.status === STATUS.DONE) statusColor = 'status-done';
+          else if (item.reviews?.fr === REVIEW_STATUS.REQUESTED || item.reviews?.de === REVIEW_STATUS.REQUESTED) statusColor = 'status-review';
+
+          div.innerHTML = `
+            <div class="status-indicator ${statusColor}"></div>
+            <div style="flex:1; overflow:hidden;">
+              <div class="item-content">${escapeHtml(item.text)}</div>
+              <div class="item-meta">
+                 ${getBadges(item)}
+              </div>
+            </div>
+          `;
+          div.onclick = () => {
+            selectedItemId = item.id;
+            renderList(); 
+            renderDetail(item);
+          };
+          return div;
+      };
+
+      // Render Groups (Tasks) - Newest first
+      const sortedTaskIds = Object.keys(groups).sort((a, b) => {
+          const timeA = parseInt(a.split('_')[1] || 0);
+          const timeB = parseInt(b.split('_')[1] || 0);
+          return timeB - timeA;
+      });
+
+      sortedTaskIds.forEach(taskId => {
+          const groupItems = groups[taskId];
+          // Format date: e.g. "Jan 10, 10:30 AM"
+          const ts = parseInt(taskId.split('_')[1]);
+          const date = new Date(ts);
+          const dateStr = isNaN(date.getTime()) ? taskId : date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          
+          // Get requester name from first item in group
+          const requesterName = groupItems[0]?.requesterName || 'Unknown';
+          
+          const groupDiv = document.createElement('div');
+          groupDiv.className = 'task-group';
+          
+          groupDiv.innerHTML = `
+             <div class="task-header">
+               <div style="display:flex; flex-direction:column; gap:2px;">
+                 <span style="font-size:11px; font-weight:600;">Task ID: ${taskId}</span>
+                 <span style="font-size:10px; font-weight:400; opacity:0.8;">by ${escapeHtml(requesterName)} · ${dateStr}</span>
+               </div>
+               <span>${groupItems.length} items</span>
+             </div>
+             <div class="task-items" id="group-${taskId}"></div>
+          `;
+          
+          listEl.appendChild(groupDiv);
+          const container = groupDiv.querySelector(`#group-${taskId}`);
+          groupItems.forEach(item => container.appendChild(renderItem(item)));
+      });
+
+      // Render Items without Task ID (Legacy or Drafts)
+      if (noTaskItems.length > 0) {
+          if (sortedTaskIds.length > 0) {
+             const header = document.createElement('div');
+             header.className = 'section-label';
+             header.style.padding = '8px 4px 4px 4px';
+             header.style.marginTop = '8px';
+             header.innerText = 'Unassigned / Drafts';
+             listEl.appendChild(header);
+          }
+          noTaskItems.forEach(item => listEl.appendChild(renderItem(item)));
+      }
+      
+      updateFooter();
+    }
+    
+    /**
+     * Generate status badges for an item
+     * Shows language-specific review status
+     */
+    function getBadges(item) {
+        if (item.status === STATUS.DONE) return '✅ Done';
+        if (item.status === STATUS.DRAFT) return 'Draft';
+
+        let badges = [];
+        if (item.reviews?.fr === REVIEW_STATUS.REQUESTED) badges.push('🇫🇷 Req');
+        if (item.reviews?.fr === REVIEW_STATUS.APPROVED) badges.push('🇫🇷 OK');
+        if (item.reviews?.de === REVIEW_STATUS.REQUESTED) badges.push('🇩🇪 Req');
+        if (item.reviews?.de === REVIEW_STATUS.APPROVED) badges.push('🇩🇪 OK');
+
+        return badges.join(' ') || 'Review';
+    }
+
+    /**
+     * Update tab badge counters
+     */
+    function updateBadges() {
+      const counts = {
+        all: items.length,
+        draft: items.filter(i => i.status === STATUS.DRAFT).length,
+        review: items.filter(i => i.status !== STATUS.DRAFT && i.status !== STATUS.DONE).length,
+        done: items.filter(i => i.status === STATUS.DONE).length
+      };
+
+      document.getElementById('badge-all').innerText = counts.all;
+      document.getElementById('badge-draft').innerText = counts.draft;
+      document.getElementById('badge-review').innerText = counts.review;
+      document.getElementById('badge-done').innerText = counts.done;
+    }
+
+    function updateFooter() {
+      const btn = document.getElementById('btnFooterAction');
+      
+      if (activeTab === 'draft') {
+        const count = items.filter(i => i.status === STATUS.DRAFT).length;
+        btn.innerText = `Request Review (${count})`;
+        btn.disabled = count === 0;
+        btn.onclick = () => openReviewRequestModal();
+      } else if (activeTab === 'review') {
+        // Option: Add 'Approve All' if we wanted, but logic is complex with dual languages
+        // For now, simplify to just hint
+        btn.innerText = 'Select items to Approve (FR/DE)';
+        btn.disabled = true;
+      } else {
+        btn.innerText = 'Actions available in Draft/Review tabs';
+        btn.disabled = true;
+      }
+    }
+
+    /**
+     * Render item detail view (right panel)
+     */
+    function renderDetail(item) {
+      document.getElementById('detailPlaceholder').style.display = 'none';
+      document.getElementById('detailContent').style.display = 'block';
+
+      // Header
+      document.getElementById('detailId').innerText = item.id;
+      const badge = document.getElementById('detailStatusBadge');
+      badge.className = `status-badge badge-${item.status.toLowerCase()}`;
+      badge.innerText = item.status;
+
+      // Source
+      document.getElementById('detailSource').innerText = item.text;
+      
+      // Trigger Rule Match Check
+      document.getElementById('glossaryMatches').innerHTML = '<span style="color:#999">Checking...</span>';
+      parent.postMessage({ pluginMessage: { type: 'check-translation', text: item.text } }, '*');
+
+      // Draft Section
+      const draftSection = document.getElementById('draftSection');
+      const reviewSection = document.getElementById('reviewSection');
+      // const btnApprove = document.getElementById('btnApprove'); // Removed duplicate declaration
+
+      // Drafts Rendering
+      const renderOptions = (lang, options) => {
+        if (!options) return '<div style="color:#999; font-style:italic; padding: 12px; text-align:center; background:#FAFAFA; border-radius:6px; border:1px dashed #ddd;">No drafts generated yet. Click "Generate" above.</div>';
+        return options.map(opt => `
+          <div class="option-card ${item.final[lang] === opt.text ? 'selected' : ''}" 
+               onclick="selectDraft('${item.id}', '${lang}', '${escapeHtml(opt.text)}')">
+            <div class="option-card-text">${escapeHtml(opt.text)}</div>
+            <div class="option-card-nuance">${escapeHtml(opt.nuance)}</div>
+          </div>
+        `).join('');
+      };
+
+      document.getElementById('draftsFr').innerHTML = renderOptions('fr', item.drafts?.fr);
+      document.getElementById('draftsDe').innerHTML = renderOptions('de', item.drafts?.de);
+
+      // Visibility based on Status & Role
+      const btnApproveFr = document.getElementById('btnApproveFr');
+      const btnApproveDe = document.getElementById('btnApproveDe');
+      
+      btnApproveFr.style.display = 'none';
+      btnApproveDe.style.display = 'none';
+
+      if (activeTab === 'review' || item.status === STATUS.IN_PROGRESS || (item.reviews?.fr && item.reviews?.fr !== REVIEW_STATUS.PENDING) || (item.reviews?.de && item.reviews?.de !== REVIEW_STATUS.PENDING)) {
+          reviewSection.style.display = 'block';
+          
+          btnApproveFr.style.display = 'inline-flex';
+          btnApproveDe.style.display = 'inline-flex';
+          
+          // French Button State
+          btnApproveFr.className = 'btn-approve';
+          if (item.reviews?.fr === REVIEW_STATUS.APPROVED) {
+              btnApproveFr.innerText = "🇫🇷 Approved ✓";
+              btnApproveFr.disabled = true;
+              btnApproveFr.classList.add('approved');
+          } else if (item.reviews?.fr === REVIEW_STATUS.REQUESTED) {
+              btnApproveFr.innerText = "🇫🇷 Approve French";
+              btnApproveFr.disabled = false;
+              btnApproveFr.onclick = () => approveSingle(item, 'fr');
+          } else {
+              btnApproveFr.innerText = "🇫🇷 Not Requested";
+              btnApproveFr.disabled = true;
+              btnApproveFr.classList.add('approved');
+          }
+
+          // German Button State
+          btnApproveDe.className = 'btn-approve';
+          if (item.reviews?.de === REVIEW_STATUS.APPROVED) {
+              btnApproveDe.innerText = "🇩🇪 Approved ✓";
+              btnApproveDe.disabled = true;
+              btnApproveDe.classList.add('approved');
+          } else if (item.reviews?.de === REVIEW_STATUS.REQUESTED) {
+              btnApproveDe.innerText = "🇩🇪 Approve German";
+              btnApproveDe.disabled = false;
+              btnApproveDe.onclick = () => approveSingle(item, 'de');
+          } else {
+              btnApproveDe.innerText = "🇩🇪 Not Requested";
+              btnApproveDe.disabled = true;
+              btnApproveDe.classList.add('approved');
+          }
+      } else {
+          // Draft or Done or All (if not in progress)
+          reviewSection.style.display = 'block'; // Always show review/edit section
+      }
+
+      // Populate Edit Fields
+      document.getElementById('editFr').value = item.final.fr || '';
+      document.getElementById('editDe').value = item.final.de || '';
+      
+      // Auto-save and auto-resize edit fields
+      const editFr = document.getElementById('editFr');
+      const editDe = document.getElementById('editDe');
+      
+      editFr.oninput = (e) => { 
+        item.final.fr = e.target.value; 
+        saveState(); 
+        autoResizeTextarea(e.target);
+      };
+      editDe.oninput = (e) => { 
+        item.final.de = e.target.value; 
+        saveState(); 
+        autoResizeTextarea(e.target);
+      };
+      
+      // Initial auto-resize
+      autoResizeTextarea(editFr);
+      autoResizeTextarea(editDe);
+      
+      // Focus Action
+      document.getElementById('btnFocus').onclick = () => {
+        parent.postMessage({ pluginMessage: { type: 'focus-nodes', ids: item.ids } }, '*');
+      };
+
+      // Delete Action
+      const btnDeleteItem = document.getElementById('btnDeleteItem');
+      const btnRegen = document.getElementById('btnRegen');
+      const isDone = item.status === STATUS.DONE;
+      
+      // Disable buttons for Done items
+      btnDeleteItem.disabled = isDone;
+      btnRegen.disabled = isDone;
+      
+      btnDeleteItem.onclick = isDone ? null : () => {
+         if (!confirm('Remove this item from list?')) return;
+         const idx = items.findIndex(i => i.id === item.id);
+         if (idx > -1) {
+             items.splice(idx, 1);
+             parent.postMessage({ pluginMessage: { type: 'clear-highlights', ids: item.ids } }, '*');
+             saveState();
+             selectedItemId = null;
+             document.getElementById('detailPlaceholder').style.display = 'block';
+             document.getElementById('detailContent').style.display = 'none';
+             renderList();
+             updateBadges();
+         }
+      };
+      
+      // Regen Action
+      btnRegen.onclick = isDone ? null : () => generateDraftsForSingle(item);
+      
+      // Language Apply Toggle Buttons
+      const btnApplyFr = document.getElementById('btnApplyFr');
+      const btnApplyDe = document.getElementById('btnApplyDe');
+      
+      // Set initial state based on item.appliedLang
+      const isFrActive = item.appliedLang === 'fr';
+      const isDeActive = item.appliedLang === 'de';
+      
+      btnApplyFr.className = 'btn-apply' + (isFrActive ? ' active' : '');
+      btnApplyDe.className = 'btn-apply' + (isDeActive ? ' active' : '');
+      
+      btnApplyFr.innerText = isFrActive ? 'Applied ✓' : 'Apply to Canvas';
+      btnApplyDe.innerText = isDeActive ? 'Applied ✓' : 'Apply to Canvas';
+      
+      btnApplyFr.onclick = () => toggleApplyTranslation(item, 'fr');
+      btnApplyDe.onclick = () => toggleApplyTranslation(item, 'de');
+    }
+    
+    /**
+     * Toggle translation application to Figma canvas
+     */
+    function toggleApplyTranslation(item, lang) {
+      const currentlyApplied = item.appliedLang === lang;
+      
+      if (currentlyApplied) {
+        // Revert to original English
+        parent.postMessage({ 
+          pluginMessage: { 
+            type: 'apply-text', 
+            ids: item.ids, 
+            text: item.text // Original English text
+          } 
+        }, '*');
+        item.appliedLang = null;
+      } else {
+        // Apply translation
+        const translatedText = item.final[lang];
+        if (!translatedText) {
+          alert(`No ${lang === 'fr' ? 'French' : 'German'} translation available. Please generate or enter a translation first.`);
           return;
         }
-  
-        const btn = document.getElementById('btnTranslate');
-        const resultArea = document.getElementById('translationResult');
-        
-        btn.disabled = true;
-        btn.innerText = '번역 중...';
-        resultArea.innerHTML = '';
-  
-        try {
-          const text = currentDetailItem.text;
-          const contextInput = document.getElementById('contextInput');
-          const context = contextInput ? contextInput.value.trim() : '';
-          
-          let referenceText = "";
-          if (currentDetailMatches && currentDetailMatches.length > 0) {
-             referenceText = "\nExisting Resources (Reference):\n" + currentDetailMatches.map(m => {
-               const parts = [`Key: ${m.key}`, `EN: "${m.value}"`];
-               if (m.deValue) parts.push(`DE: "${m.deValue}"`);
-               if (m.frValue) parts.push(`FR: "${m.frValue}"`);
-               return "- " + parts.join(", ");
-             }).join("\n");
-          }
-  
-          const prompt = `
-            Translate the following text into French (fr) and German (de).
-            Context: Mobile app/webtoon platform (Tappytoon).
-            ${context ? `User Context: ${context}` : ''}
-            ${referenceText}
-            
-            Source Text: "${text}"
-            
-            Requirements:
-            1. Provide 3 options for each language.
-            2. Explain the nuance for each option briefly in Korean.
-            3. Recommend the best option in Korean.
-            
-            Output JSON format:
-            {
-              "fr": [ { "text": "...", "nuance": "..." }, ... ],
-              "de": [ { "text": "...", "nuance": "..." }, ... ],
-              "recommendation": "Explain which option is best and why."
-            }
-          `;
-  
-          const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-              model: "gpt-4o-mini",
-              messages: [{ role: "user", content: prompt }],
-              response_format: { type: "json_object" }
-            })
-          });
-  
-          const data = await response.json();
-          
-          if (data.error) {
-            throw new Error(data.error.message);
-          }
-  
-          const content = JSON.parse(data.choices[0].message.content);
-          renderTranslationResult(content);
-  
-        } catch (err) {
-          resultArea.innerHTML = `<div style="color:red; padding:10px;">Error: ${err.message}</div>`;
-        } finally {
-          btn.disabled = false;
-          btn.innerText = '번역 실행';
-        }
-      };
-    }
-
-    function renderTranslationResult(data) {
-      const container = document.getElementById('translationResult');
-      let html = '';
-
-      ['fr', 'de'].forEach(lang => {
-        const langName = lang === 'fr' ? 'French 🇫🇷' : 'German 🇩🇪';
-        const options = data[lang];
-        html += `<div class="suggestion"><div class="lang-title">${langName}</div>`;
-        if (Array.isArray(options)) {
-          options.forEach(opt => {
-            html += `
-              <div class="trans-option">
-                <div class="trans-text">${escapeHtml(opt.text)}</div>
-                <div class="trans-nuance">${escapeHtml(opt.nuance)}</div>
-              </div>
-            `;
-          });
-        }
-        html += `</div>`;
-      });
-
-      if (data.recommendation) {
-        html += `<div class="recommendation"><strong>💡 AI 추천 의견:</strong><br>${escapeHtml(data.recommendation)}</div>`;
+        parent.postMessage({ 
+          pluginMessage: { 
+            type: 'apply-text', 
+            ids: item.ids, 
+            text: translatedText
+          } 
+        }, '*');
+        item.appliedLang = lang;
       }
-
-      container.innerHTML = html;
-    }
-
-    function unmergeItem(index) {
-      const item = currentData[index];
-      if (!item.originalItems) return;
-      const restoredItems = item.originalItems.map(original => ({
-        ...original,
-        checked: true,
-        mergeSelected: false
-      }));
-      currentData.splice(index, 1, ...restoredItems);
-      render();
-      updateCanvasSelection();
-    }
-
-    function updateCanvasSelection() {
-      const allCheckedIds = currentData
-        .filter(d => d.checked)
-        .flatMap(d => d.ids);
-      parent.postMessage({ pluginMessage: { type: 'update-selection', ids: allCheckedIds } }, '*');
-    }
-
-    function focusNodes(ids) {
-      parent.postMessage({ pluginMessage: { type: 'focus-nodes', ids: ids } }, '*');
-    }
-
-    document.getElementById('btnMergeAction').onclick = () => {
-      const selectedItems = currentData.filter(d => d.mergeSelected);
-      if (selectedItems.length < 2) return;
-
-      const newText = selectedItems.map(d => d.text).join(' ');
-      const newIds = selectedItems.flatMap(d => d.ids);
-
-      const newItem = {
-        ids: newIds,
-        text: newText,
-        checked: true,
-        mergeSelected: false,
-        originalItems: selectedItems
-      };
-
-      const firstMergeIndex = currentData.findIndex(d => d.mergeSelected);
-      const newData = [];
       
-      currentData.forEach((item, index) => {
-        if (index === firstMergeIndex) {
-          newData.push(newItem);
-        } 
-        if (!item.mergeSelected) {
-           if (index !== firstMergeIndex) newData.push(item);
+      saveState();
+      renderDetail(item);
+    }
+
+    /**
+     * Display glossary matches from existing resources
+     */
+    function renderGlossaryMatches(matches) {
+        const el = document.getElementById('glossaryMatches');
+        const section = document.getElementById('glossarySection');
+        
+        if (!matches || matches.length === 0) {
+            el.innerHTML = '<div style="color:#999; text-align:center; padding:8px;">No matches found in glossary</div>';
+            return;
         }
-      });
-      
-      currentData = newData;
-      render();
-      updateCanvasSelection();
+        
+        el.innerHTML = matches.map((m, i) => `
+            <div style="padding:10px; ${i > 0 ? 'border-top:1px solid #E5E7EB;' : ''}">
+               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                 <span style="font-weight:600; color:#0F766E; font-size:11px;">${m.key}</span>
+                 <span style="font-size:10px; padding:2px 6px; background:#E0F2FE; color:#0369A1; border-radius:4px;">${m.type}</span>
+               </div>
+               <div style="font-size:12px; color:#333; margin-bottom:4px;">🇬🇧 ${escapeHtml(m.value)}</div>
+               ${m.frValue ? `<div style="font-size:11px; color:#666;">🇫🇷 ${escapeHtml(m.frValue)}</div>` : ''}
+               ${m.deValue ? `<div style="font-size:11px; color:#666;">🇩🇪 ${escapeHtml(m.deValue)}</div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    // ========================================
+    // USER ACTIONS
+    // ========================================
+
+    /**
+     * Select a draft translation option
+     */
+    window.selectDraft = (itemId, lang, text) => {
+      const item = items.find(i => i.id === itemId);
+      if (item) {
+        item.final[lang] = text;
+        renderDetail(item);
+        saveState();
+      }
     };
 
-    document.getElementById('btnCopy').onclick = () => {
-      const text = currentData.filter(d => d.checked).map(d => d.text).join('\n');
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      
-      const btn = document.getElementById('btnCopy');
-      const original = btn.innerText;
-      btn.innerText = "완료!";
-      setTimeout(() => btn.innerText = original, 1000);
-    };
+    /**
+     * Generate AI translation drafts for a single item
+     */
+    function generateDraftsForSingle(item) {
+        if (!apiKey) {
+            alert('Please set API Key in settings');
+            return;
+        }
+        
+        const btn = document.getElementById('btnRegen');
+        btn.innerText = "Generating...";
+        
+        // Construct prompt (Simplified for this file)
+        // In real app, this would use the robust prompt construction from before
+        fetch(OPENAI_CONFIG.API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+                model: OPENAI_CONFIG.MODEL,
+                messages: [{  
+                    role: "user", 
+                    content: `Translate to French and German. JSON format: {"fr": [{"text":"...", "nuance":"..."}], "de": [...]}. Text: "${item.text}"` 
+                }],
+                response_format: { type: "json_object" }
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const content = JSON.parse(data.choices[0].message.content);
+            item.drafts = { fr: content.fr, de: content.de };
+            if(!item.final.fr) item.final.fr = content.fr[0]?.text;
+            if(!item.final.de) item.final.de = content.de[0]?.text;
+            saveState();
+            renderDetail(item);
+            btn.innerText = "Generate Drafts";
+        })
+        .catch(err => {
+            alert("Error: " + err.message);
+            btn.innerText = "Generate Drafts";
+        });
+    }
+
+    /**
+     * Send notification to Slack via webhook
+     * Uses no-cors mode to bypass browser restrictions
+     */
+    function sendToSlack(payload) {
+        if (!slackWebhookUrl) {
+            alert('Slack Webhook URL is missing. Please set it in Settings.');
+            return;
+        }
+
+        // Note: no-cors mode prevents reading response, but sends the request
+        fetch(slackWebhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alert('Notification sent to Slack!');
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Failed to send to Slack (Check Console).');
+        });
+    }
+
+    /**
+     * Open review request modal and send Slack notifications
+     * Allows selecting French and/or German for review
+     */
+    function openReviewRequestModal() {
+        const effectiveFileKey = getEffectiveFileKey();
+        console.log('openReviewRequestModal called', effectiveFileKey);
+        console.log('Using figmaFileName:', figmaFileName);
+        console.log('Using figmaUser:', figmaUser);
+
+        if (!effectiveFileKey) {
+            alert("Figma File Key is missing.\n\nFor local development:\n1. Open this file in browser: figma.com\n2. Copy the file key from URL\n3. Go to Settings (⚙️) and paste it in 'Figma File Key'\n\nOr save your file to a project (not Drafts) and restart the plugin.");
+            return;
+        }
+
+        // Just use a simple confirm for now, or add checkbox for languages
+        // Let's prompt for language selection
+        const reqFr = confirm("Request French Review? (Cancel to skip)");
+        const reqDe = confirm("Request German Review? (Cancel to skip)");
+
+        if (!reqFr && !reqDe) return;
+
+        const list = items.filter(i => i.status === STATUS.DRAFT);
+        
+        // Generate a unique Task ID for this batch
+        const now = new Date();
+        const taskId = 'task_' + now.getTime();
+        const taskTime = now.toLocaleString();
+        
+        const requesterName = figmaUser ? figmaUser.name : "Unknown User";
+        
+        list.forEach(i => {
+            if (reqFr) i.reviews.fr = REVIEW_STATUS.REQUESTED;
+            if (reqDe) i.reviews.de = REVIEW_STATUS.REQUESTED;
+            i.status = STATUS.IN_PROGRESS;
+            i.taskId = taskId;
+            i.requesterName = requesterName;
+        });
+
+        saveState();
+        renderList();
+        updateBadges();
+
+        // Build Figma links
+        const baseLinks = buildFigmaLinks();
+        // const firstItemLinks = list.length > 0 ? buildFigmaLinks(list[0].id) : null; // Removed per request to have only one main link
+
+        // Prepare Slack notification blocks
+        const languages = [];
+        if (reqFr) languages.push("🇫🇷 French");
+        if (reqDe) languages.push("🇩🇪 German");
+        
+        let blocks = [
+            {
+                type: "header",
+                text: {
+                    type: "plain_text",
+                    text: "🚀 New Translation Request",
+                    emoji: true
+                }
+            },
+            {
+                type: "context",
+                elements: [
+                    {
+                        type: "mrkdwn",
+                        text: "🔴 *Please check in the Review tab!*"
+                    }
+                ]
+            },
+            {
+                type: "section",
+                fields: [
+                    {
+                        type: "mrkdwn",
+                        text: `*Time:*\n${taskTime}`
+                    },
+                    {
+                        type: "mrkdwn",
+                        text: `*Requester:*\n${requesterName}`
+                    }
+                ]
+            },
+            {
+                type: "section",
+                fields: [
+                    {
+                        type: "mrkdwn",
+                        text: `*File:*\n${figmaFileName}`
+                    },
+                    {
+                        type: "mrkdwn",
+                        text: `*Task ID:*\n${taskId}`
+                    }
+                ]
+            },
+            {
+                type: "section",
+                fields: [
+                    {
+                        type: "mrkdwn",
+                        text: `*Items:*\n${list.length} text nodes`
+                    },
+                    {
+                        type: "mrkdwn",
+                        text: `*Languages:*\n${languages.join(", ")}`
+                    }
+                ]
+            },
+            {
+                type: "divider"
+            },
+            {
+                type: "actions",
+                elements: [
+                    {
+                        type: "button",
+                        text: {
+                            type: "plain_text",
+                            text: "Open in Browser",
+                            emoji: true
+                        },
+                        url: baseLinks.web,
+                        style: "primary"
+                    },
+                    {
+                        type: "button",
+                        text: {
+                            type: "plain_text",
+                            text: "Open in Desktop App",
+                            emoji: true
+                        },
+                        url: baseLinks.desktop
+                    }
+                ]
+            }
+        ];
+
+        const payload = {
+            text: `New Translation Request from ${requesterName}`,
+            blocks: blocks
+        };
+
+        sendToSlack(payload);
+    }
+    
+    function approveSingle(item, lang) {
+        if (!item.reviews) return;
+        item.reviews[lang] = REVIEW_STATUS.APPROVED;
+
+        // Check if all requested reviews are now approved
+        const frPending = item.reviews.fr === REVIEW_STATUS.REQUESTED;
+        const dePending = item.reviews.de === REVIEW_STATUS.REQUESTED;
+        
+        if (!frPending && !dePending) {
+            item.status = STATUS.DONE;
+
+            // Check if this was the last item in the task
+            if (item.taskId) {
+                const taskItems = items.filter(i => i.taskId === item.taskId);
+                const allDone = taskItems.every(i => i.status === STATUS.DONE);
+
+                if (allDone) {
+                    // Send Slack Notification for TASK completion
+                    if (getEffectiveFileKey()) {
+                        const links = buildFigmaLinks();
+                        const now = new Date();
+                        const completionTime = now.toLocaleString();
+                        const taskRequester = item.requesterName || 'Unknown User';
+                        
+                        // Count approved languages
+                        const approvedLangs = [];
+                        if (taskItems.some(i => i.reviews?.fr === REVIEW_STATUS.APPROVED)) approvedLangs.push("French 🇫🇷");
+                        if (taskItems.some(i => i.reviews?.de === REVIEW_STATUS.APPROVED)) approvedLangs.push("German 🇩🇪");
+                        
+                        const payload = {
+                            text: `✅ Translation Task Completed`,
+                            blocks: [
+                                {
+                                    type: "header",
+                                    text: {
+                                        type: "plain_text",
+                                        text: "✅ Translation Task Completed",
+                                        emoji: true
+                                    }
+                                },
+                                {
+                                    type: "context",
+                                    elements: [
+                                        {
+                                            type: "mrkdwn",
+                                            text: "🟢 *All translations have been approved!*"
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: "section",
+                                    fields: [
+                                        {
+                                            type: "mrkdwn",
+                                            text: `*Completion Time:*\n${completionTime}`
+                                        },
+                                        {
+                                            type: "mrkdwn",
+                                            text: `*Requester:*\n${taskRequester}`
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: "section",
+                                    fields: [
+                                        {
+                                            type: "mrkdwn",
+                                            text: `*File:*\n${figmaFileName}`
+                                        },
+                                        {
+                                            type: "mrkdwn",
+                                            text: `*Task ID:*\n${item.taskId}`
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: "section",
+                                    fields: [
+                                        {
+                                            type: "mrkdwn",
+                                            text: `*Items:*\n${taskItems.length} text nodes`
+                                        },
+                                        {
+                                            type: "mrkdwn",
+                                            text: `*Languages:*\n${approvedLangs.join(", ")}`
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: "divider"
+                                },
+                                {
+                                    type: "actions",
+                                    elements: [
+                                        {
+                                            type: "button",
+                                            text: { type: "plain_text", text: "Open in Browser", emoji: true },
+                                            url: links.web,
+                                            style: "primary"
+                                        },
+                                        {
+                                            type: "button",
+                                            text: { type: "plain_text", text: "Open in Desktop App", emoji: true },
+                                            url: links.desktop
+                                        }
+                                    ]
+                                }
+                            ]
+                        };
+                        sendToSlack(payload);
+                    }
+                }
+            }
+        }
+        
+        saveState();
+        renderList();
+        renderDetail(item);
+        updateBadges();
+    }
+
+    // --- Helpers ---
+    function saveState() {
+      console.log('UI: saveState called, items:', items.length);
+      // items 배열이 유효한지 확인
+      const dataToSave = Array.isArray(items) ? items : [];
+      parent.postMessage({ pluginMessage: { type: 'save-state', data: dataToSave } }, '*');
+    }
+
+    function autoResizeTextarea(textarea) {
+      if (!textarea) return;
+      // Reset height to auto to get the correct scrollHeight
+      textarea.style.height = 'auto';
+      // Set height to scrollHeight (content height)
+      const newHeight = Math.min(Math.max(textarea.scrollHeight, 40), 200);
+      textarea.style.height = newHeight + 'px';
+    }
 
     function escapeHtml(text) {
       if (!text) return "";
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
+
+    /**
+     * Normalize Figma node ID for use in deep links
+     * Converts "I98:2814;3019:15922" to "I98-2814"
+     */
+    function normalizeNodeId(nodeId) {
+      return nodeId.split(';')[0].replace(/:/g, '-');
+    }
+
+    /**
+     * Get the effective file key (manual override or auto-detected)
+     */
+    function getEffectiveFileKey() {
+      return manualFileKey || figmaFileKey;
+    }
+
+    /**
+     * Encode file name for use in URLs
+     */
+    function encodeFileName(fileName) {
+      return fileName ? encodeURIComponent(fileName) : 'Untitled';
+    }
+
+    /**
+     * Build Figma deep links for both web and desktop
+     */
+    function buildFigmaLinks(nodeId = null) {
+      const effectiveFileKey = getEffectiveFileKey();
+      const fileNameEncoded = encodeFileName(figmaFileName);
+
+      const baseWeb = `${FIGMA_URLS.WEB}/${effectiveFileKey}/${fileNameEncoded}`;
+      const baseDesktop = `${FIGMA_URLS.DESKTOP}/${effectiveFileKey}`;
+
+      if (nodeId) {
+        const normalizedId = normalizeNodeId(nodeId);
+        return {
+          web: `${baseWeb}?node-id=${normalizedId}`,
+          desktop: `${baseDesktop}?node-id=${normalizedId}`
+        };
+      }
+
+      return { web: baseWeb, desktop: baseDesktop };
+    }
+
+    // --- Buttons ---
+    document.getElementById('btnAdd').onclick = () => {
+      console.log('Add button clicked - sending add-selection message');
+      parent.postMessage({ pluginMessage: { type: 'add-selection' } }, '*');
+    };
+    document.getElementById('btnClear').onclick = () => { 
+      items = []; 
+      saveState(); 
+      renderList(); 
+      updateBadges(); 
+      parent.postMessage({ pluginMessage: { type: 'clear-highlights' } }, '*');
+    };
+    document.getElementById('btnSettings').onclick = () => {
+        document.getElementById('apiKeyInput').value = apiKey;
+        document.getElementById('slackUrlInput').value = slackWebhookUrl;
+        document.getElementById('fileKeyInput').value = manualFileKey;
+        document.getElementById('settingsModal').style.display = 'flex';
+    };
+    document.getElementById('btnCloseKey').onclick = () => document.getElementById('settingsModal').style.display = 'none';
+    document.getElementById('btnSaveKey').onclick = () => {
+        const key = document.getElementById('apiKeyInput').value || '';
+        const url = document.getElementById('slackUrlInput').value || '';
+        const fileKey = document.getElementById('fileKeyInput').value.trim() || '';
+
+        console.log('UI: Saving settings - apiKey length:', key.length, 'slackUrl length:', url.length, 'fileKey:', fileKey);
+
+        apiKey = key;
+        slackWebhookUrl = url;
+        manualFileKey = fileKey;
+
+        // 항상 저장 (빈 값도 저장하여 삭제 가능하도록)
+        parent.postMessage({ pluginMessage: { type: 'save-api-key', apiKey: key } }, '*');
+        parent.postMessage({ pluginMessage: { type: 'save-slack-url', url: url } }, '*');
+        parent.postMessage({ pluginMessage: { type: 'save-manual-file-key', key: fileKey } }, '*');
+
+        updateFileKeyDisplay();
+        document.getElementById('settingsModal').style.display = 'none';
+        
+        console.log('UI: Settings saved');
+    };
+
+    // 2. 모든 핸들러와 이벤트 설정이 완료된 후 ui-ready 전송
+    // 이렇게 해야 plugin에서 보내는 restore-state 등의 메시지를 받을 준비가 됨
+    console.log('UI: All handlers registered, sending ui-ready');
+    parent.postMessage({ pluginMessage: { type: 'ui-ready' } }, '*');
+
   </script>
 </body>
 </html>

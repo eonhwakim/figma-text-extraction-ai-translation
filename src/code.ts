@@ -8,26 +8,68 @@ let currentTextIds = new Set<string>();
 // 텍스트 노드 ID → 하이라이트 사각형 ID 매핑 (인스턴스 노드는 setPluginData 불가하므로 별도 관리)
 const highlightMap = new Map<string, string>();
 
-// 초기화 및 상태 로드
-async function init() {
-  // Shared Data: Load from Document Root (Shared across users in the file)
+// 초기화 및 상태 로드 (UI가 준비되면 호출)
+async function loadSettings() {
+  console.log('Code: loadSettings called');
+  
+  // 1. Send File & User Info (Immediate)
+  const fileKey = figma.fileKey || '';
+  const fileName = figma.root.name || 'Untitled';
+  
+  // currentUser 접근 시 권한 오류 방지 (manifest.json에 permissions: ["currentuser"] 필요)
+  let currentUser = null;
+  try {
+    currentUser = figma.currentUser;
+    console.log('Code: currentUser =', currentUser ? currentUser.name : 'null');
+  } catch (e) {
+    console.warn('Code: Cannot access currentUser (permission not granted)', e);
+  }
+
+  const userPayload = currentUser ? { name: currentUser.name, id: currentUser.id } : null;
+  console.log('Code: sending file-key, fileKey:', fileKey, 'fileName:', fileName, 'user:', userPayload);
+  
+  figma.ui.postMessage({ 
+    type: 'load-file-key', 
+    key: fileKey, 
+    name: fileName,
+    user: userPayload
+  });
+
+  // 2. Local Data: Load API Key & Slack URL (User-level, figma.clientStorage)
+  // 항상 로드하고 UI로 전송 (빈 값도 전송)
+  try {
+    const apiKey = await figma.clientStorage.getAsync('openai_api_key');
+    const slackUrl = await figma.clientStorage.getAsync('slack_webhook_url');
+    const manualFileKey = await figma.clientStorage.getAsync('manual_file_key');
+
+    console.log('Code: loaded local settings - apiKey:', !!apiKey, 'slackUrl:', !!slackUrl, 'manualFileKey:', !!manualFileKey);
+
+    // 항상 전송 (빈 값이어도 UI에서 초기화 가능하도록)
+    figma.ui.postMessage({ type: 'load-api-key', apiKey: apiKey || '' });
+    figma.ui.postMessage({ type: 'load-slack-url', url: slackUrl || '' });
+    figma.ui.postMessage({ type: 'load-manual-file-key', key: manualFileKey || '' });
+
+  } catch (e) {
+    console.error('Failed to load local settings', e);
+    // 실패해도 빈 값 전송
+    figma.ui.postMessage({ type: 'load-api-key', apiKey: '' });
+    figma.ui.postMessage({ type: 'load-slack-url', url: '' });
+    figma.ui.postMessage({ type: 'load-manual-file-key', key: '' });
+  }
+
+  // 3. Shared Data: Load from Document Root (Document-level, figma.root.getPluginData)
   const savedStateStr = figma.root.getPluginData('pluginState');
+  console.log('Code: loaded pluginState from document, length:', savedStateStr ? savedStateStr.length : 0);
+  
   const savedBatchResultsStr = figma.root.getPluginData('pluginBatchResults');
   const savedContextStr = figma.root.getPluginData('pluginBatchContext');
 
-  // Local Data: Load API Key from clientStorage
-  try {
-    const apiKey = await figma.clientStorage.getAsync('openai_api_key');
-    if (apiKey) {
-       figma.ui.postMessage({ type: 'load-api-key', apiKey });
-    }
-  } catch (e) {
-    console.error('Failed to load API key', e);
-  }
-
-  if (savedStateStr) {
+  if (savedStateStr && savedStateStr.length > 0) {
     try {
       const savedState = JSON.parse(savedStateStr);
+      const itemCount = Array.isArray(savedState) ? savedState.length : 0;
+      console.log('Code: parsing savedState success, items:', itemCount);
+      
       // 상태 복원
       figma.ui.postMessage({ 
         type: 'restore-state', 
@@ -37,12 +79,24 @@ async function init() {
       // 재스캔 방지용 ID 복원
       if (Array.isArray(savedState)) {
         savedState.forEach((item: any) => {
-          item.ids.forEach((id: string) => currentTextIds.add(id));
+          if (item.ids && Array.isArray(item.ids)) {
+            item.ids.forEach((id: string) => currentTextIds.add(id));
+          }
         });
+      }
+      
+      if (itemCount > 0) {
+        figma.notify(`✅ ${itemCount}개의 저장된 항목을 불러왔습니다.`);
       }
     } catch (e) {
       console.error('Failed to parse saved state', e);
+      figma.notify('⚠️ 저장된 상태 파싱 실패', { error: true });
+      figma.ui.postMessage({ type: 'restore-state', data: [] });
     }
+  } else {
+    console.log('Code: No saved state found in document.');
+    // 빈 상태도 전송 (UI 초기화용)
+    figma.ui.postMessage({ type: 'restore-state', data: [] });
   }
 
   if (savedBatchResultsStr) {
@@ -64,32 +118,76 @@ async function init() {
       data: savedContextStr
     });
   }
+  
+  console.log('Code: loadSettings completed');
 }
 
-init();
-
 figma.ui.onmessage = (msg) => {
-  // API Key 저장 (Client Storage - User Specific)
-  if (msg.type === 'save-api-key') {
-     figma.clientStorage.setAsync('openai_api_key', msg.apiKey).catch(err => {
-        console.error('Failed to save API key', err);
-     });
+  // UI 준비 완료 신호 받으면 설정 로드
+  if (msg.type === 'ui-ready') {
+    console.log('Code: Received ui-ready');
+    loadSettings();
   }
 
-  // 0. 상태 저장 (Document Shared)
+  // API Key 및 Settings 저장 (Local Data - User-level, figma.clientStorage)
+  if (msg.type === 'save-api-key') {
+    const value = msg.apiKey || '';
+    console.log('Code: saving API key, length:', value.length);
+    figma.clientStorage.setAsync('openai_api_key', value)
+      .then(() => console.log('Code: API key saved successfully'))
+      .catch(err => console.error('Code: Failed to save API key', err));
+  }
+  if (msg.type === 'save-slack-url') {
+    const value = msg.url || '';
+    console.log('Code: saving Slack URL, length:', value.length);
+    figma.clientStorage.setAsync('slack_webhook_url', value)
+      .then(() => console.log('Code: Slack URL saved successfully'))
+      .catch(err => console.error('Code: Failed to save Slack URL', err));
+  }
+  if (msg.type === 'save-manual-file-key') {
+    const value = msg.key || '';
+    console.log('Code: saving manual file key:', value);
+    figma.clientStorage.setAsync('manual_file_key', value)
+      .then(() => console.log('Code: Manual file key saved successfully'))
+      .catch(err => console.error('Code: Failed to save manual file key', err));
+  }
+
+  // 상태 저장 (Shared Data - Document-level, figma.root.setPluginData)
   if (msg.type === 'save-state') {
-    const strData = JSON.stringify(msg.data);
-    figma.root.setPluginData('pluginState', strData);
+    const itemCount = Array.isArray(msg.data) ? msg.data.length : 0;
+    console.log('Code: save-state received, items:', itemCount);
     
-    // Update internal ID set to match saved state
-    const newIds = new Set<string>();
-    if (Array.isArray(msg.data)) {
-      msg.data.forEach((item: any) => {
-        item.ids.forEach((id: string) => newIds.add(id));
-      });
+    try {
+      const strData = JSON.stringify(msg.data || []);
+      
+      // 저장
+      figma.root.setPluginData('pluginState', strData);
+      
+      // 저장 확인 (바로 읽어서 검증)
+      const verifyData = figma.root.getPluginData('pluginState');
+      const verified = verifyData === strData;
+      console.log('Code: pluginState saved, size:', strData.length, 'verified:', verified);
+      
+      if (!verified) {
+        console.error('Code: Save verification FAILED! Saved length:', strData.length, 'Read length:', verifyData?.length);
+        figma.notify('⚠️ 상태 저장 검증 실패', { error: true });
+      }
+      
+      // Update internal ID set to match saved state
+      const newIds = new Set<string>();
+      if (Array.isArray(msg.data)) {
+        msg.data.forEach((item: any) => {
+          if (item.ids && Array.isArray(item.ids)) {
+            item.ids.forEach((id: string) => newIds.add(id));
+          }
+        });
+      }
+      console.log('Code: currentTextIds updated from', currentTextIds.size, 'to', newIds.size);
+      currentTextIds = newIds;
+    } catch (e) {
+      console.error('Code: Failed to save state', e);
+      figma.notify('⚠️ 상태 저장 실패: ' + (e as Error).message, { error: true });
     }
-    console.log('save-state: updating currentTextIds from', currentTextIds.size, 'to', newIds.size);
-    currentTextIds = newIds;
   }
   
   // 1. 특정 노드(들) 선택 및 포커스
@@ -173,7 +271,52 @@ figma.ui.onmessage = (msg) => {
     figma.currentPage.selection = nodesToSelect;
   }
 
-  // 3. 번역/리소스 확인
+  // 3. 텍스트 적용 (번역 또는 원본 복원)
+  if (msg.type === 'apply-text') {
+    const ids = msg.ids as string[];
+    const text = msg.text as string;
+    
+    let appliedCount = 0;
+    for (const id of ids) {
+      const node = figma.getNodeById(id);
+      if (node && node.type === 'TEXT') {
+        const textNode = node as TextNode;
+        
+        // 폰트 로드 후 텍스트 변경
+        (async () => {
+          try {
+            // 모든 폰트 로드
+            await figma.loadFontAsync(textNode.fontName as FontName);
+            textNode.characters = text;
+            appliedCount++;
+          } catch (e) {
+            console.error('Failed to apply text to node', id, e);
+            // Mixed fonts인 경우 각 문자의 폰트를 개별 로드 시도
+            try {
+              const len = textNode.characters.length;
+              for (let i = 0; i < len; i++) {
+                const font = textNode.getRangeFontName(i, i + 1);
+                if (font !== figma.mixed) {
+                  await figma.loadFontAsync(font as FontName);
+                }
+              }
+              textNode.characters = text;
+              appliedCount++;
+            } catch (e2) {
+              console.error('Failed to apply text even after loading all fonts', id, e2);
+              figma.notify(`⚠️ 폰트 로드 실패: ${id}`, { error: true });
+            }
+          }
+        })();
+      }
+    }
+    
+    if (appliedCount > 0 || ids.length === 1) {
+      figma.notify(`✅ 텍스트가 적용되었습니다.`);
+    }
+  }
+
+  // 4. 번역/리소스 확인
   if (msg.type === 'check-translation') {
     const text = msg.text;
     const matches = findMatches(text);
@@ -208,16 +351,23 @@ figma.ui.onmessage = (msg) => {
     figma.root.setPluginData('pluginBatchContext', strData);
   }
 
-  // 7. 하이라이트 제거 (목록 초기화 시 또는 특정 항목 제거 시)
+  // 7. 하이라이트 제거
   if (msg.type === 'clear-highlights') {
     clearHighlights(msg.ids);
-    
-    // 만약 특정 ID만 지웠다면(목록에서 체크 해제), 내부 상태(currentTextIds)에서도 제거해야 함
     if (msg.ids && Array.isArray(msg.ids)) {
       msg.ids.forEach((id: string) => currentTextIds.delete(id));
     }
   }
 };
+
+// Selection Change Listener to sync with UI
+figma.on('selectionchange', () => {
+    const selection = figma.currentPage.selection;
+    if (selection.length > 0) {
+        // Send first selected ID to UI to auto-focus in list if present
+        figma.ui.postMessage({ type: 'selection-changed', id: selection[0].id });
+    }
+});
 
 // --- Highlight Helpers ---
 function highlightNode(node: SceneNode) {
@@ -312,19 +462,21 @@ function clearHighlights(targetIds?: string[]) {
 }
 
 // Helper to strip tags and variables from resource strings for comparison
-// e.g. "Completed <u>{{daysProgress}}</u> days" -> "completed  days"
+// e.g. "Completed <u>{{daysProgress}}</u> days" -> "completed days"
 // e.g. "Hello {{name}}" -> "hello "
 function normalizeResourceString(str: string): string {
   // Remove HTML tags
   let normalized = str.replace(/<[^>]*>/g, '');
   // Remove {{...}} variables
   normalized = normalized.replace(/{{[^}]*}}/g, '');
-  // Remove special chars and extra spaces
-  return normalized.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  // Remove special chars AND numbers (chunking strategy)
+  // Split into words and join to normalize spaces
+  return normalized.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(w => w.length > 1).join(' ').trim();
 }
 
 function normalizeQueryString(str: string): string {
-    return str.toLowerCase().replace(/[0-9\/]/g, ' ').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    // Same normalization for query: remove numbers, special chars, keep only meaningful words > 1 char
+    return str.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(w => w.length > 1).join(' ').trim();
 }
 
 function findMatches(queryText: string) {
@@ -338,6 +490,9 @@ function findMatches(queryText: string) {
   
   const queryRaw = queryText.trim().toLowerCase();
   const queryNormalized = normalizeQueryString(queryText);
+  
+  // Ignore very short queries to avoid bad matches like "up" for "uploading"
+  if (queryNormalized.length < 3) return [];
 
   // Iterate over all keys in en resources
   for (const groupKey in enResources) {
@@ -356,16 +511,22 @@ function findMatches(queryText: string) {
                   matchType = 'EXACT';
                   score = 100;
               }
-              // 2. Normalized Match (ignoring tags/variables/numbers)
-              // This helps match "Completed 3/7 days" with "Completed <u>{{daysProgress}}</u> days"
-              else if (queryNormalized.length > 3 && valNormalized === queryNormalized) {
+              // 2. Normalized Match (Chunking / Semantic-ish)
+              // Only match if significantly similar and length is sufficient
+              else if (valNormalized === queryNormalized && queryNormalized.length > 0) {
                   matchType = 'PATTERN_MATCH';
                   score = 90;
               }
-              // 3. Partial match (Raw)
-              else if (queryRaw.length > 3 && (valLower.includes(queryRaw) || queryRaw.includes(valLower))) {
-                  matchType = 'PARTIAL';
-                  score = 50;
+              // 3. Partial match (Strict containment)
+              // Prevent "up" matching "uploading" by checking word boundaries or length ratio
+              else if (queryRaw.length > 4 && valLower.includes(queryRaw)) {
+                   // Ensure it's not just a tiny substring
+                   matchType = 'PARTIAL';
+                   score = 60;
+              }
+              else if (valLower.length > 4 && queryRaw.includes(valLower)) {
+                   matchType = 'PARTIAL';
+                   score = 50;
               }
 
               if (matchType) {

@@ -6,6 +6,7 @@
   "ui": "src/ui.html",
   "capabilities": [],
   "enableProposedApi": false,
-  "editorType": ["figma", "figjam"]
+  "editorType": ["figma", "figjam"],
+  "permissions": ["currentuser"]
 }
 
